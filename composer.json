@@ -16,7 +16,10 @@
         "yeaha/owl-core": "dev-master"
     },
     "autoload": {
-        "psr-4": {"Owl\\": "src"},
+        "psr-4": {
+            "Owl\\Service\\": "src/Service/",
+            "Owl\\": "src"
+        },
         "files": ["src/functions.php"]
     },
     "autoload-dev": {

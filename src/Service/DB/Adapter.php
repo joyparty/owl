@@ -1,7 +1,7 @@
 <?php
 namespace Owl\Service\DB;
 
-use Owl\Application as App;
+use Owl\Logger;
 
 abstract class Adapter extends \Owl\Service
 {
@@ -103,9 +103,9 @@ abstract class Adapter extends \Owl\Service
         try {
             $handler = new \PDO($dsn, $user, $password, $options);
 
-            App::log('debug', 'database connected', ['dsn' => $dsn]);
+            Logger::log('debug', 'database connected', ['dsn' => $dsn]);
         } catch (\Exception $exception) {
-            App::log('error', 'database connect failed', [
+            Logger::log('error', 'database connect failed', [
                 'error' => $exception->getMessage(),
                 'dsn' => $dsn,
             ]);
@@ -122,7 +122,7 @@ abstract class Adapter extends \Owl\Service
             $this->rollbackAll();
             $this->handler = null;
 
-            App::log('debug', 'database disconnected', ['dsn' => $this->getConfig('dsn')]);
+            Logger::log('debug', 'database disconnected', ['dsn' => $this->getConfig('dsn')]);
         }
 
         return $this;
@@ -187,7 +187,7 @@ abstract class Adapter extends \Owl\Service
         ? []
         : is_array($params) ? $params : array_slice(func_get_args(), 1);
 
-        App::log('debug', 'database execute', [
+        Logger::log('debug', 'database execute', [
             'sql' => ($sql instanceof \PDOStatement) ? $sql->queryString : $sql,
             'parameters' => $params,
         ]);

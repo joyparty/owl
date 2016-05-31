@@ -1,8 +1,7 @@
 <?php
-
 namespace Owl\Service;
 
-use Owl\Application as App;
+use Owl\Logger;
 
 // https://github.com/nrk/predis
 if (!class_exists('\Predis\Client')) {
@@ -44,7 +43,7 @@ class Predis extends \Owl\Service
             $method = $this->command_alias[$command];
         }
 
-        App::log('debug', 'redis execute', [
+        Logger::log('debug', 'redis execute', [
             'command' => $command,
             'arguments' => $args,
         ]);
@@ -61,12 +60,12 @@ class Predis extends \Owl\Service
             try {
                 $this->client = new \Predis\Client($parameters, $options);
 
-                App::log('debug', 'redis connected', [
+                Logger::log('debug', 'redis connected', [
                     'parameters' => $parameters,
                     'options' => $options,
                 ]);
             } catch (\Exception $exception) {
-                App::log('error', 'redis connect failed', [
+                Logger::log('error', 'redis connect failed', [
                     'error' => $exception->getMessage(),
                     'parameters' => $parameters,
                     'options' => $options,
@@ -89,7 +88,7 @@ class Predis extends \Owl\Service
 
             $this->client = null;
 
-            App::log('debug', 'redis disconnected', [
+            Logger::log('debug', 'redis disconnected', [
                 'parameters' => $parameters,
             ]);
         }
