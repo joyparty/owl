@@ -1,7 +1,7 @@
 {
     "name": "yeaha/owl-service",
-    "description": "Database adapter",
-    "keywords": ["mysql", "postgresql", "redis"],
+    "description": "Database and other storage service adapter",
+    "keywords": ["database", "mysql", "postgresql", "redis"],
     "homepage": "https://github.com/yeaha/owl-service",
     "license": "MIT",
     "authors": [
