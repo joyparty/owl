@@ -10,8 +10,19 @@ class Table
 
     public function __construct(Adapter $adapter, $table_name)
     {
-        $this->adapter = $adapter;
+        $this->adapter    = $adapter;
         $this->table_name = $table_name;
+    }
+
+    /**
+     * 清除之前获取过的字段和索引信息
+     *
+     * @return void
+     */
+    public function reset()
+    {
+        $this->columns = null;
+        $this->indexes = null;
     }
 
     /**
@@ -47,6 +58,18 @@ class Table
         }
 
         return $this->columns;
+    }
+
+    /**
+     * 获得指定字段的信息
+     *
+     * @return array
+     */
+    public function getColumn($column_name)
+    {
+        $columns = $this->getColumns();
+
+        return isset($columns[$column_name]) ? $columns[$column_name] : [];
     }
 
     /**
