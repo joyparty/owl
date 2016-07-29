@@ -176,6 +176,14 @@ abstract class Adapter extends \Owl\Service
         return true;
     }
 
+    public function rollbackAll()
+    {
+        $max = 9; // 最多9次，避免死循环
+        while ($this->in_transaction && $max-- > 0) {
+            $this->rollback();
+        }
+    }
+
     public function inTransaction()
     {
         return $this->in_transaction;
@@ -370,13 +378,5 @@ abstract class Adapter extends \Owl\Service
         }
 
         return $this->prepare($sql);
-    }
-
-    protected function rollbackAll()
-    {
-        $max = 9; // 最多9次，避免死循环
-        while ($this->in_transaction && $max-- > 0) {
-            $this->rollback();
-        }
     }
 }
