@@ -126,4 +126,50 @@ EOF;
 
         return array_values($indexes);
     }
+
+    protected function listForeignKeys()
+    {
+        // http://stackoverflow.com/questions/1152260/postgres-sql-to-list-table-foreign-keys
+        $sql = <<< EOF
+select
+    tc.constraint_name,
+    tc.table_schema,
+    tc.table_name,
+    kcu.column_name,
+    ccu.table_schema as foreign_schema_name,
+    ccu.table_name as foreign_table_name,
+    ccu.column_name as foreign_column_name
+from
+    information_schema.table_constraints as tc
+    join information_schema.key_column_usage as kcu
+      on tc.constraint_name = kcu.constraint_name
+    join information_schema.constraint_column_usage as ccu
+      on ccu.constraint_name = tc.constraint_name
+where
+    constraint_type = 'FOREIGN KEY'
+    and tc.table_schema = ?
+    and tc.table_name = ?
+EOF;
+
+        $adapter              = $this->adapter;
+        list($schema, $table) = $adapter->parseTableName($this->table_name);
+        $res                  = $adapter->execute($sql, $schema, $table);
+
+        $result = [];
+        while ($row = $res->fetch()) {
+            $constraint_name = $row['constraint_name'];
+
+            if (!isset($result[$constraint_name])) {
+                $result[$constraint_name] = [
+                    'name'              => $constraint_name,
+                    'reference_table'   => $row['foreign_schema_name'] . '.' . $row['foreign_table_name'],
+                    'reference_columns' => [],
+                ];
+            }
+
+            $result[$constraint_name]['reference_columns'][$row['column_name']] = $row['foreign_column_name'];
+        }
+
+        return array_values($result);
+    }
 }

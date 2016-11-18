@@ -7,10 +7,9 @@ abstract class Table
     protected $table_name;
     protected $columns;
     protected $indexes;
+    protected $foreign_keys;
 
     /**
-     * @param string $table
-     *
      * @return [
      *     (string) => [
      *         'primary_key' => (boolean),
@@ -29,8 +28,6 @@ abstract class Table
     abstract protected function listColumns();
 
     /**
-     * @param string $table
-     *
      * @return [
      *     [
      *         'name' => (string),
@@ -42,6 +39,20 @@ abstract class Table
      * ]
      */
     abstract protected function listIndexes();
+
+    /**
+     * @return [
+     *     [
+     *         'name' => (string),
+     *         'reference_table' => (string),
+     *         'reference_columns' => [
+     *             (string) => (string),    // local column => reference column
+     *             ...
+     *         ],
+     *     ],
+     * ]
+     */
+    abstract protected function listForeignKeys();
 
     public function __construct(Adapter $adapter, $table_name)
     {
@@ -56,8 +67,9 @@ abstract class Table
 
     public function reset()
     {
-        $this->columns = null;
-        $this->indexes = null;
+        $this->columns      = null;
+        $this->indexes      = null;
+        $this->foreign_keys = null;
     }
 
     /**
@@ -150,6 +162,26 @@ abstract class Table
         }
 
         return false;
+    }
+
+    public function getForeignKeys()
+    {
+        if ($this->foreign_keys === null) {
+            $this->foreign_keys = $this->listForeignKeys();
+        }
+
+        return $this->foreign_keys;
+    }
+
+    public function getReferenceTables()
+    {
+        $tables = [];
+
+        foreach ($this->getForeignKeys() as $foreign_key) {
+            $tables[] = $foreign_key['reference_table'];
+        }
+
+        return $tables;
     }
 
     /**
