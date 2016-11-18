@@ -1,12 +1,47 @@
 <?php
 namespace Owl\Service\DB;
 
-class Table
+abstract class Table
 {
     protected $adapter;
     protected $table_name;
     protected $columns;
     protected $indexes;
+
+    /**
+     * @param string $table
+     *
+     * @return [
+     *     (string) => [
+     *         'primary_key' => (boolean),
+     *         'type' => (string),
+     *         'sql_type' => (string),
+     *         'character_max_length' => (integer),
+     *         'numeric_precision' => (integer),
+     *         'numeric_scale' => (integer),
+     *         'default_value' => (mixed),
+     *         'not_null' => (boolean),
+     *         'comment' => (string),
+     *     ],
+     *     ...
+     * ]
+     */
+    abstract protected function listColumns();
+
+    /**
+     * @param string $table
+     *
+     * @return [
+     *     [
+     *         'name' => (string),
+     *         'columns' => [(string), ...],
+     *         'is_primary' => (boolean),
+     *         'is_unique' => (boolean),
+     *     ],
+     *     ...
+     * ]
+     */
+    abstract protected function listIndexes();
 
     public function __construct(Adapter $adapter, $table_name)
     {
@@ -14,11 +49,11 @@ class Table
         $this->table_name = $table_name;
     }
 
-    /**
-     * 清除之前获取过的字段和索引信息
-     *
-     * @return void
-     */
+    public function __clone()
+    {
+        $this->reset();
+    }
+
     public function reset()
     {
         $this->columns = null;
@@ -26,7 +61,7 @@ class Table
     }
 
     /**
-     * 获得表名
+     * 获得表名.
      *
      * @return string
      */
@@ -46,22 +81,21 @@ class Table
     }
 
     /**
-     * 获得字段信息
+     * 获得所有的字段信息.
      *
-     * @see \Owl\Service\DB\Adapter
      * @return array
      */
     public function getColumns()
     {
         if ($this->columns === null) {
-            $this->columns = $this->adapter->getColumns($this->table_name);
+            $this->columns = $this->listColumns();
         }
 
         return $this->columns;
     }
 
     /**
-     * 获得指定字段的信息
+     * 获得指定字段的信息.
      *
      * @return array
      */
@@ -73,9 +107,24 @@ class Table
     }
 
     /**
-     * 检查字段是否存在
+     * 获得所有的索引信息.
+     *
+     * @return array
+     */
+    public function getIndexes()
+    {
+        if ($this->indexes === null) {
+            $this->indexes = $this->listIndexes();
+        }
+
+        return $this->indexes;
+    }
+
+    /**
+     * 检查字段是否存在.
      *
      * @param string $column_name
+     *
      * @return bool
      */
     public function hasColumn($column_name)
@@ -86,23 +135,10 @@ class Table
     }
 
     /**
-     * 获得索引信息
-     *
-     * @return array
-     */
-    public function getIndexes()
-    {
-        if ($this->indexes === null) {
-            $this->indexes = $this->adapter->getIndexes($this->table_name);
-        }
-
-        return $this->indexes;
-    }
-
-    /**
-     * 检查索引是否存在
+     * 检查索引是否存在.
      *
      * @param string $index_name
+     *
      * @return bool
      */
     public function hasIndex($index_name)
@@ -117,9 +153,10 @@ class Table
     }
 
     /**
-     * 获得指定字段上的索引
+     * 获得指定字段上的索引.
      *
      * @param string $column_name
+     *
      * @return array
      */
     public function getIndexesOfColumn($column_name)
@@ -146,9 +183,10 @@ class Table
     }
 
     /**
-     * 插入一条记录，返回插入的行数
+     * 插入一条记录，返回插入的行数.
      *
      * @param array $row
+     *
      * @return int
      */
     public function insert(array $row)
@@ -158,11 +196,12 @@ class Table
 
     /**
      * 更新记录，允许指定条件
-     * 返回被更新的行数
+     * 返回被更新的行数.
      *
-     * @param array $row
+     * @param array  $row
      * @param string $where
-     * @param mixed $parameters
+     * @param mixed  $parameters
+     *
      * @return int
      */
     public function update(array $row/*, $where = null, $parameters = null*/)
@@ -174,13 +213,14 @@ class Table
     }
 
     /**
-     * 删除记录，允许指定条件
+     * 删除记录，允许指定条件.
      *
      * @param string $where
-     * @param mixed $parameters
+     * @param mixed  $parameters
+     *
      * @return int
      */
-    public function delete( /*$where = null, $parameters = null*/)
+    public function delete(/*$where = null, $parameters = null*/)
     {
         $args = func_get_args();
         array_unshift($args, $this->table_name);

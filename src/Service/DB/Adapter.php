@@ -20,39 +20,9 @@ abstract class Adapter extends \Owl\Service
     abstract public function getTables();
 
     /**
-     * @param string $table
-     *
-     * @return [
-     *     (string) => [
-     *         'primary_key' => (boolean),
-     *         'type' => (string),
-     *         'sql_type' => (string),
-     *         'character_max_length' => (integer),
-     *         'numeric_precision' => (integer),
-     *         'numeric_scale' => (integer),
-     *         'default_value' => (mixed),
-     *         'not_null' => (boolean),
-     *         'comment' => (string),
-     *     ],
-     *     ...
-     * ]
+     * @return \Owl\Service\DB\Table
      */
-    abstract public function getColumns($table);
-
-    /**
-     * @param string $table
-     *
-     * @return [
-     *     [
-     *         'name' => (string),
-     *         'columns' => [(string), ...],
-     *         'is_primary' => (boolean),
-     *         'is_unique' => (boolean),
-     *     ],
-     *     ...
-     * ]
-     */
-    abstract public function getIndexes($table);
+    abstract public function getTable($table_name);
 
     public function __construct(array $config = [])
     {
@@ -132,11 +102,11 @@ abstract class Adapter extends \Owl\Service
     {
         if ($this->in_transaction) {
             if (!$this->support_savepoint) {
-                throw new \Exception(get_class($this).' unsupport savepoint');
+                throw new \Exception(get_class($this) . ' unsupport savepoint');
             }
 
             $savepoint = $this->quoteIdentifier(uniqid('savepoint_'));
-            $this->execute('SAVEPOINT '.$savepoint);
+            $this->execute('SAVEPOINT ' . $savepoint);
             $this->savepoints[] = $savepoint;
         } else {
             $this->execute('BEGIN');
@@ -151,7 +121,7 @@ abstract class Adapter extends \Owl\Service
         if ($this->in_transaction) {
             if ($this->savepoints) {
                 $savepoint = array_pop($this->savepoints);
-                $this->execute('RELEASE SAVEPOINT '.$savepoint);
+                $this->execute('RELEASE SAVEPOINT ' . $savepoint);
             } else {
                 $this->execute('COMMIT');
                 $this->in_transaction = false;
@@ -166,7 +136,7 @@ abstract class Adapter extends \Owl\Service
         if ($this->in_transaction) {
             if ($this->savepoints) {
                 $savepoint = array_pop($this->savepoints);
-                $this->execute('ROLLBACK TO SAVEPOINT '.$savepoint);
+                $this->execute('ROLLBACK TO SAVEPOINT ' . $savepoint);
             } else {
                 $this->execute('ROLLBACK');
                 $this->in_transaction = false;
@@ -251,7 +221,7 @@ abstract class Adapter extends \Owl\Service
 
         $result = [];
         foreach (explode('.', $identifier) as $s) {
-            $result[] = $symbol.$s.$symbol;
+            $result[] = $symbol . $s . $symbol;
         }
 
         return new Expr(implode('.', $result));
@@ -260,11 +230,6 @@ abstract class Adapter extends \Owl\Service
     public function select($table)
     {
         return new \Owl\Service\DB\Select($this, $table);
-    }
-
-    public function getTable($table_name)
-    {
-        return new \Owl\Service\DB\Table($this, $table_name);
     }
 
     public function hasTable($table_name)
@@ -353,16 +318,16 @@ abstract class Adapter extends \Owl\Service
         $set = [];
         foreach ($columns as $column => $value) {
             if ($only_column) {
-                $set[] = $this->quoteIdentifier($value).' = ?';
+                $set[] = $this->quoteIdentifier($value) . ' = ?';
             } else {
                 $value = ($value instanceof Expr) ? $value : '?';
-                $set[] = $this->quoteIdentifier($column).' = '.$value;
+                $set[] = $this->quoteIdentifier($column) . ' = ' . $value;
             }
         }
 
         $sql = sprintf('UPDATE %s SET %s', $this->quoteIdentifier($table), implode(',', $set));
         if ($where) {
-            $sql .= ' WHERE '.$where;
+            $sql .= ' WHERE ' . $where;
         }
 
         return $this->prepare($sql);
@@ -374,9 +339,25 @@ abstract class Adapter extends \Owl\Service
 
         $sql = sprintf('DELETE FROM %s', $table);
         if ($where) {
-            $sql .= ' WHERE '.$where;
+            $sql .= ' WHERE ' . $where;
         }
 
         return $this->prepare($sql);
+    }
+
+    /**
+     * @deprecated
+     */
+    public function getColumns($table_name)
+    {
+        return $this->getTable($table_name)->getColumns();
+    }
+
+    /**
+     * @deprecated
+     */
+    public function getIndexes($table_name)
+    {
+        return $this->getTable($table_name)->getIndexes();
     }
 }
