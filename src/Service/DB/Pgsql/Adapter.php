@@ -33,15 +33,10 @@ class Adapter extends \Owl\Service\DB\Adapter
 
         $tables = [];
         foreach ($select->iterator() as $row) {
-            $tables[] = sprintf('"%s"."%s"', $row['table_schema'], $row['table_name']);
+            $tables[] = sprintf('%s.%s', $row['table_schema'], $row['table_name']);
         }
 
         return $tables;
-    }
-
-    public function getTable($table_name)
-    {
-        return new Table($this, $table_name);
     }
 
     public function parseTableName($table)
@@ -53,9 +48,9 @@ class Adapter extends \Owl\Service\DB\Adapter
             list($schema, $table) = explode('.', $table, 2);
 
             return [$schema, $table];
-        } else {
-            return ['public', $table];
         }
+
+        return ['public', $table];
     }
 
     protected function sequenceName($table, $column)

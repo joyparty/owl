@@ -47,9 +47,4 @@ class Adapter extends \Owl\Service\DB\Adapter
                     ->execute()
                     ->getCols();
     }
-
-    public function getTable($table_name)
-    {
-        return new Table($this, $table_name);
-    }
 }

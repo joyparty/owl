@@ -19,11 +19,6 @@ abstract class Adapter extends \Owl\Service
      */
     abstract public function getTables();
 
-    /**
-     * @return \Owl\Service\DB\Table
-     */
-    abstract public function getTable($table_name);
-
     public function __construct(array $config = [])
     {
         if (!isset($config['dsn'])) {
@@ -232,8 +227,20 @@ abstract class Adapter extends \Owl\Service
         return new \Owl\Service\DB\Select($this, $table);
     }
 
+    /**
+     * @return \Owl\Service\DB\Table
+     */
+    public function getTable($table_name)
+    {
+        $class = str_replace('Adapter', 'Table', get_class($this));
+
+        return new $class($this, $table_name);
+    }
+
     public function hasTable($table_name)
     {
+        $table_name = str_replace($this->identifier_symbol, '', $table_name);
+
         return in_array($table_name, $this->getTables());
     }
 
