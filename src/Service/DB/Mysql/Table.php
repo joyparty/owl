@@ -60,4 +60,30 @@ class Table extends \Owl\Service\DB\Table
 
         return array_values($indexes);
     }
+
+    protected function listForeignKeys()
+    {
+        $adapter = $this->adapter;
+        $select  = $adapter->select('information_schema.KEY_COLUMN_USAGE')
+            ->setColumns(['CONSTRAINT_NAME', 'TABLE_NAME', 'COLUMN_NAME', 'REFERENCED_TABLE_NAME', 'REFERENCED_COLUMN_NAME'])
+            ->where('TABLE_SCHEMA = database()')
+            ->where('TABLE_NAME = ?', $this->table_name);
+
+        $result = [];
+        foreach ($select->iterator() as $row) {
+            $constraint_name = $row['CONSTRAINT_NAME'];
+
+            if (!isset($result[$constraint_name])) {
+                $result[$constraint_name] = [
+                    'name'              => $constraint_name,
+                    'reference_table'   => $row['REFERENCED_TABLE_NAME'],
+                    'reference_columns' => [],
+                ];
+            }
+
+            $result[$constraint_name]['reference_columns'][$row['COLUMN_NAME']] = $row['REFERENCED_COLUMN_NAME'];
+        }
+
+        return array_values($result);
+    }
 }
