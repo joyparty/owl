@@ -67,7 +67,8 @@ class Table extends \Owl\Service\DB\Table
         $select  = $adapter->select('information_schema.KEY_COLUMN_USAGE')
             ->setColumns(['CONSTRAINT_NAME', 'TABLE_NAME', 'COLUMN_NAME', 'REFERENCED_TABLE_NAME', 'REFERENCED_COLUMN_NAME'])
             ->where('TABLE_SCHEMA = database()')
-            ->where('TABLE_NAME = ?', $this->table_name);
+            ->where('TABLE_NAME = ?', $this->table_name)
+            ->where('REFERENCED_TABLE_NAME is not null');
 
         $result = [];
         foreach ($select->iterator() as $row) {
