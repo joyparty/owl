@@ -164,6 +164,13 @@ abstract class Table
         return false;
     }
 
+    /**
+     * 获得外键关联定义.
+     *
+     * @see Table::listForeignKeys()
+     *
+     * @return array
+     */
     public function getForeignKeys()
     {
         if ($this->foreign_keys === null) {
@@ -173,15 +180,22 @@ abstract class Table
         return $this->foreign_keys;
     }
 
+    /**
+     * 获得有关键关联的表，返回Table对象数组.
+     *
+     * @return array
+     */
     public function getReferenceTables()
     {
         $tables = [];
 
         foreach ($this->getForeignKeys() as $foreign_key) {
-            $tables[] = $foreign_key['reference_table'];
+            $table_name = $foreign_key['reference_table'];
+
+            $tables[$table_name] = new static($this->adapter, $table_name);
         }
 
-        return $tables;
+        return array_values($tables);
     }
 
     /**
