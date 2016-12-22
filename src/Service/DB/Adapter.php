@@ -62,8 +62,7 @@ abstract class Adapter extends \Owl\Service
         $password = $this->getConfig('password') ?: null;
         $options  = $this->getConfig('options') ?: [];
 
-        $options[\PDO::ATTR_ERRMODE]         = \PDO::ERRMODE_EXCEPTION;
-        $options[\PDO::ATTR_STATEMENT_CLASS] = ['\Owl\Service\DB\Statement'];
+        $options[\PDO::ATTR_ERRMODE] = \PDO::ERRMODE_EXCEPTION;
 
         try {
             $handler = new \PDO($dsn, $user, $password, $options);
@@ -165,7 +164,7 @@ abstract class Adapter extends \Owl\Service
             'parameters' => $params,
         ]);
 
-        if ($sql instanceof \PDOStatement) {
+        if ($sql instanceof \PDOStatement || $sql instanceof Statement) {
             $sth = $sql;
             $sth->execute($params);
         } elseif ($params) {
@@ -177,7 +176,15 @@ abstract class Adapter extends \Owl\Service
 
         $sth->setFetchMode(\PDO::FETCH_ASSOC);
 
-        return $sth;
+        return Statement::factory($sth);
+    }
+
+    public function prepare()
+    {
+        $handler   = $this->connect();
+        $statement = call_user_func_array([$handler, 'prepare'], func_get_args());
+
+        return Statement::factory($statement);
     }
 
     public function quote($value)

@@ -1,9 +1,17 @@
 <?php
-
 namespace Owl\Service\DB;
 
-class Statement extends \PDOStatement
+class Statement
 {
+    use \Owl\Traits\Decorator;
+
+    protected $statement;
+
+    public function __construct(\PDOStatement $statement)
+    {
+        $this->statement = $this->reference = $statement;
+    }
+
     /**
      * 返回用于执行的sql语句.
      *
@@ -11,7 +19,7 @@ class Statement extends \PDOStatement
      */
     public function __toString()
     {
-        return $this->queryString;
+        return $this->statement->queryString;
     }
 
     /**
@@ -21,7 +29,7 @@ class Statement extends \PDOStatement
      */
     public function getRow()
     {
-        return $this->fetch();
+        return $this->statement->fetch();
     }
 
     /**
@@ -33,7 +41,7 @@ class Statement extends \PDOStatement
      */
     public function getCol($col_number = 0)
     {
-        return $this->fetch(\PDO::FETCH_COLUMN, $col_number);
+        return $this->statement->fetch(\PDO::FETCH_COLUMN, $col_number);
     }
 
     /**
@@ -45,7 +53,7 @@ class Statement extends \PDOStatement
      */
     public function getCols($col_number = 0)
     {
-        return $this->fetchAll(\PDO::FETCH_COLUMN, $col_number);
+        return $this->statement->fetchAll(\PDO::FETCH_COLUMN, $col_number);
     }
 
     /**
@@ -63,9 +71,22 @@ class Statement extends \PDOStatement
 
         $rowset = [];
         while ($row = $this->fetch()) {
-            $rowset[ $row[$column] ] = $row;
+            $rowset[$row[$column]] = $row;
         }
 
         return $rowset;
+    }
+
+    public static function factory($statement): Statement
+    {
+        if ($statement instanceof self) {
+            return $statement;
+        }
+
+        if ($statement instanceof \PDOStatement) {
+            return new static($statement);
+        }
+
+        throw new \InvalidArgumentException('Invalid statement');
     }
 }
