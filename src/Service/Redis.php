@@ -8,7 +8,7 @@ if (!extension_loaded('redis')) {
 
 class Redis extends \Owl\Service
 {
-    protected $config = array(
+    protected $config = [
         'host' => '127.0.0.1',
         'port' => 6379,
         'timeout' => 0,
@@ -17,7 +17,7 @@ class Redis extends \Owl\Service
         'unix_socket' => '',        // eg: /tmp/redis.sock
         'password' => '',
         'database' => 0,    // dbindex, the database number to switch to
-    );
+    ];
 
     protected $handler;
 
@@ -42,7 +42,7 @@ class Redis extends \Owl\Service
     public function __call($fn, array $args)
     {
         return $args
-             ? call_user_func_array(array($this->connect(), $fn), $args)
+             ? call_user_func_array([$this->connect(), $fn], $args)
              : $this->connect()->$fn();
     }
 
@@ -57,14 +57,14 @@ class Redis extends \Owl\Service
 
         // 优先使用unix socket
         $conn_args = $config['unix_socket']
-                   ? array($config['unix_socket'])
-                   : array($config['host'], $config['port'], $config['timeout']);
+                   ? [$config['unix_socket']]
+                   : [$config['host'], $config['port'], $config['timeout']];
 
         if ($this->isPersistent()) {
             $conn_args[] = $config['persistent_id'];
-            $conn = call_user_func_array(array($handler, 'pconnect'), $conn_args);
+            $conn = call_user_func_array([$handler, 'pconnect'], $conn_args);
         } else {
-            $conn = call_user_func_array(array($handler, 'connect'), $conn_args);
+            $conn = call_user_func_array([$handler, 'connect'], $conn_args);
         }
 
         if (!$conn) {
@@ -76,7 +76,7 @@ class Redis extends \Owl\Service
         }
 
         if ($config['database'] && !$handler->select($config['database'])) {
-            throw new \Owl\Service\Exception('Select redis database['.$config['database'].'] failed');
+            throw new \Owl\Service\Exception('Select redis database[' . $config['database'] . '] failed');
         }
 
         if (isset($config['prefix'])) {

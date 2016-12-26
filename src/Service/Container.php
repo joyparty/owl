@@ -65,7 +65,7 @@ class Container extends \Owl\Container
         }
 
         if (!isset($this->router[$id])) {
-            throw new \Exception('Undefined service or service router: "'.$id.'"');
+            throw new \Exception('Undefined service or service router: "' . $id . '"');
         }
 
         $args = array_slice(func_get_args(), 1);

@@ -5,7 +5,7 @@ class Table extends \Owl\Service\DB\Table
 {
     protected function listColumns()
     {
-        $sql = <<< EOF
+        $sql = <<< 'EOF'
 with primary_keys as (
     select
         c.column_name
@@ -51,24 +51,24 @@ order by
     c.ordinal_position
 EOF;
 
-        $adapter              = $this->adapter;
+        $adapter = $this->adapter;
         list($schema, $table) = $adapter->parseTableName($this->table_name);
-        $res                  = $adapter->execute($sql, $schema, $table, $schema, $table);
+        $res = $adapter->execute($sql, $schema, $table, $schema, $table);
 
         $columns = [];
         while ($row = $res->fetch()) {
             $name = $row['column_name'];
 
             $column = [
-                'primary_key'          => $row['is_primary'] === 1,
-                'type'                 => $row['data_type'],
-                'sql_type'             => $row['data_type'],
+                'primary_key' => $row['is_primary'] === 1,
+                'type' => $row['data_type'],
+                'sql_type' => $row['data_type'],
                 'character_max_length' => $row['character_maximum_length'] * 1,
-                'numeric_precision'    => $row['numeric_precision'] * 1,
-                'numeric_scale'        => $row['numeric_scale'] * 1,
-                'default_value'        => $row['column_default'],
-                'not_null'             => $row['is_nullable'] === 'NO',
-                'comment'              => (string) $row['comment'],
+                'numeric_precision' => $row['numeric_precision'] * 1,
+                'numeric_scale' => $row['numeric_scale'] * 1,
+                'default_value' => $row['column_default'],
+                'not_null' => $row['is_nullable'] === 'NO',
+                'comment' => (string) $row['comment'],
             ];
 
             $columns[$name] = $column;
@@ -79,10 +79,10 @@ EOF;
 
     protected function listIndexes()
     {
-        $adapter              = $this->adapter;
+        $adapter = $this->adapter;
         list($scheme, $table) = $adapter->parseTableName($this->table_name);
 
-        $sql = <<< EOF
+        $sql = <<< 'EOF'
 select
     s.nspname as scheme_name,
     t.relname as table_name,
@@ -108,16 +108,16 @@ where
 EOF;
 
         $indexes = [];
-        $res     = $adapter->execute($sql, $scheme, $table);
+        $res = $adapter->execute($sql, $scheme, $table);
         while ($row = $res->fetch()) {
             $index_name = $row['index_name'];
 
             if (!isset($indexes[$index_name])) {
                 $indexes[$index_name] = [
-                    'name'       => $index_name,
-                    'columns'    => [$row['column_name']],
+                    'name' => $index_name,
+                    'columns' => [$row['column_name']],
                     'is_primary' => $row['is_primary'],
-                    'is_unique'  => $row['is_unique'],
+                    'is_unique' => $row['is_unique'],
                 ];
             } else {
                 $indexes[$index_name]['columns'][] = $row['column_name'];
@@ -130,7 +130,7 @@ EOF;
     protected function listForeignKeys()
     {
         // http://stackoverflow.com/questions/1152260/postgres-sql-to-list-table-foreign-keys
-        $sql = <<< EOF
+        $sql = <<< 'EOF'
 select
     tc.constraint_name,
     tc.table_schema,
@@ -151,9 +151,9 @@ where
     and tc.table_name = ?
 EOF;
 
-        $adapter              = $this->adapter;
+        $adapter = $this->adapter;
         list($schema, $table) = $adapter->parseTableName($this->table_name);
-        $res                  = $adapter->execute($sql, $schema, $table);
+        $res = $adapter->execute($sql, $schema, $table);
 
         $result = [];
         while ($row = $res->fetch()) {
@@ -161,8 +161,8 @@ EOF;
 
             if (!isset($result[$constraint_name])) {
                 $result[$constraint_name] = [
-                    'name'              => $constraint_name,
-                    'reference_table'   => $row['foreign_schema_name'] . '.' . $row['foreign_table_name'],
+                    'name' => $constraint_name,
+                    'reference_table' => $row['foreign_schema_name'] . '.' . $row['foreign_table_name'],
                     'reference_columns' => [],
                 ];
             }

@@ -9,8 +9,8 @@ abstract class Adapter extends \Owl\Service
 
     protected $identifier_symbol = '`';
     protected $support_savepoint = true;
-    protected $savepoints        = [];
-    protected $in_transaction    = false;
+    protected $savepoints = [];
+    protected $in_transaction = false;
 
     abstract public function lastID($table = null, $column = null);
 
@@ -57,10 +57,10 @@ abstract class Adapter extends \Owl\Service
             return $this->handler;
         }
 
-        $dsn      = $this->getConfig('dsn');
-        $user     = $this->getConfig('user') ?: null;
+        $dsn = $this->getConfig('dsn');
+        $user = $this->getConfig('user') ?: null;
         $password = $this->getConfig('password') ?: null;
-        $options  = $this->getConfig('options') ?: [];
+        $options = $this->getConfig('options') ?: [];
 
         $options[\PDO::ATTR_ERRMODE] = \PDO::ERRMODE_EXCEPTION;
 
@@ -71,7 +71,7 @@ abstract class Adapter extends \Owl\Service
         } catch (\Exception $exception) {
             Logger::log('error', 'database connect failed', [
                 'error' => $exception->getMessage(),
-                'dsn'   => $dsn,
+                'dsn' => $dsn,
             ]);
 
             throw new \Owl\Service\Exception('Database connect failed!', 0, $exception);
@@ -160,7 +160,7 @@ abstract class Adapter extends \Owl\Service
         : is_array($params) ? $params : array_slice(func_get_args(), 1);
 
         Logger::log('debug', 'database execute', [
-            'sql'        => ($sql instanceof \PDOStatement) ? $sql->queryString : $sql,
+            'sql' => ($sql instanceof \PDOStatement) ? $sql->queryString : $sql,
             'parameters' => $params,
         ]);
 
@@ -181,7 +181,7 @@ abstract class Adapter extends \Owl\Service
 
     public function prepare()
     {
-        $handler   = $this->connect();
+        $handler = $this->connect();
         $statement = call_user_func_array([$handler, 'prepare'], func_get_args());
 
         return Statement::factory($statement);
@@ -218,7 +218,7 @@ abstract class Adapter extends \Owl\Service
             return $identifier;
         }
 
-        $symbol     = $this->identifier_symbol;
+        $symbol = $this->identifier_symbol;
         $identifier = str_replace(['"', "'", ';', $symbol], '', $identifier);
 
         $result = [];

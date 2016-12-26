@@ -248,7 +248,7 @@ class Select
                 $column = $this->adapter->quoteIdentifier($column);
                 $sort = (strtoupper($sort) === 'DESC') ? 'DESC' : '';
 
-                $order_by[] = $sort ? $column.' '.$sort : $column;
+                $order_by[] = $sort ? $column . ' ' . $sort : $column;
             }
         }
 
@@ -320,11 +320,11 @@ class Select
             $params = array_merge($params, $table_params);
         }
 
-        $sql .= ' FROM '.$table;
+        $sql .= ' FROM ' . $table;
 
         list($where, $where_params) = $this->compileWhere();
         if ($where) {
-            $sql .= ' WHERE '.$where;
+            $sql .= ' WHERE ' . $where;
         }
 
         if ($where_params) {
@@ -333,7 +333,7 @@ class Select
 
         list($group_by, $group_params) = $this->compileGroupBy();
         if ($group_by) {
-            $sql .= ' '.$group_by;
+            $sql .= ' ' . $group_by;
         }
 
         if ($group_params) {
@@ -341,15 +341,15 @@ class Select
         }
 
         if ($this->order_by) {
-            $sql .= ' ORDER BY '.implode(', ', $this->order_by);
+            $sql .= ' ORDER BY ' . implode(', ', $this->order_by);
         }
 
         if ($this->limit) {
-            $sql .= ' LIMIT '.$this->limit;
+            $sql .= ' LIMIT ' . $this->limit;
         }
 
         if ($this->offset) {
-            $sql .= ' OFFSET '.$this->offset;
+            $sql .= ' OFFSET ' . $this->offset;
         }
 
         return [$sql, $params];
@@ -363,7 +363,7 @@ class Select
     public function count()
     {
         $columns = $this->columns;
-        $this->columns = array(new Expr('count(1)'));
+        $this->columns = [new Expr('count(1)')];
 
         $count = $this->execute()->getCol();
 
@@ -495,7 +495,7 @@ class Select
         $sth = $this->execute();
         $processor = $this->processor;
 
-        $records = array();
+        $records = [];
         while ($record = $sth->getRow()) {
             $records[] = $processor
                        ? call_user_func($processor, $record)
@@ -682,7 +682,7 @@ class Select
      */
     protected function compileFrom()
     {
-        $params = array();
+        $params = [];
 
         if ($this->table instanceof self) {
             list($sql, $params) = $this->table->compile();
@@ -721,7 +721,7 @@ class Select
                 $params = array_merge($params, $where_params);
             }
         }
-        $where = '('.implode(') AND (', $where).')';
+        $where = '(' . implode(') AND (', $where) . ')';
 
         return [$where, $params];
     }
@@ -748,9 +748,9 @@ class Select
             $group_columns = implode(',', $group_columns);
         }
 
-        $sql = 'GROUP BY '.$group_columns;
+        $sql = 'GROUP BY ' . $group_columns;
         if ($having) {
-            $sql .= ' HAVING '.$having;
+            $sql .= ' HAVING ' . $having;
         }
 
         return [$sql, $having_params];
@@ -770,7 +770,7 @@ class Select
             $current_page = 1;
         }
 
-        $page = array(
+        $page = [
             'total' => $total,
             'size' => $page_size,
             'from' => 0,
@@ -780,7 +780,7 @@ class Select
             'current' => $current_page,
             'next' => null,
             'last' => $page_count,
-        );
+        ];
 
         if ($current_page > $page['first']) {
             $page['prev'] = $current_page - 1;

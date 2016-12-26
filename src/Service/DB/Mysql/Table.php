@@ -6,7 +6,7 @@ class Table extends \Owl\Service\DB\Table
     protected function listColumns()
     {
         $adapter = $this->adapter;
-        $select  = $adapter->select('information_schema.COLUMNS')
+        $select = $adapter->select('information_schema.COLUMNS')
                           ->where('TABLE_SCHEMA = database()')
                           ->where('TABLE_NAME = ?', $this->table_name)
                           ->orderBy('ORDINAL_POSITION');
@@ -16,17 +16,17 @@ class Table extends \Owl\Service\DB\Table
             $name = $row['COLUMN_NAME'];
 
             $column = [
-                'primary_key'          => $row['COLUMN_KEY'] === 'PRI',
-                'type'                 => $row['DATA_TYPE'],
-                'sql_type'             => $row['COLUMN_TYPE'],
+                'primary_key' => $row['COLUMN_KEY'] === 'PRI',
+                'type' => $row['DATA_TYPE'],
+                'sql_type' => $row['COLUMN_TYPE'],
                 'character_max_length' => $row['CHARACTER_MAXIMUM_LENGTH'] * 1,
-                'numeric_precision'    => $row['NUMERIC_PRECISION'] * 1,
-                'numeric_scale'        => $row['NUMERIC_SCALE'] * 1,
-                'default_value'        => $row['COLUMN_DEFAULT'],
-                'not_null'             => $row['IS_NULLABLE'] === 'NO',
-                'comment'              => $row['COLUMN_COMMENT'],
-                'charset'              => $row['CHARACTER_SET_NAME'],
-                'collation'            => $row['COLLATION_NAME'],
+                'numeric_precision' => $row['NUMERIC_PRECISION'] * 1,
+                'numeric_scale' => $row['NUMERIC_SCALE'] * 1,
+                'default_value' => $row['COLUMN_DEFAULT'],
+                'not_null' => $row['IS_NULLABLE'] === 'NO',
+                'comment' => $row['COLUMN_COMMENT'],
+                'charset' => $row['CHARACTER_SET_NAME'],
+                'collation' => $row['COLLATION_NAME'],
             ];
 
             $columns[$name] = $column;
@@ -48,10 +48,10 @@ class Table extends \Owl\Service\DB\Table
 
             if (!isset($indexes[$name])) {
                 $indexes[$name] = [
-                    'name'       => $name,
-                    'columns'    => [$row['Column_name']],
+                    'name' => $name,
+                    'columns' => [$row['Column_name']],
                     'is_primary' => $row['Key_name'] === 'PRIMARY',
-                    'is_unique'  => $row['Non_unique'] == 0,
+                    'is_unique' => $row['Non_unique'] == 0,
                 ];
             } else {
                 $indexes[$name]['columns'][] = $row['Column_name'];
@@ -64,7 +64,7 @@ class Table extends \Owl\Service\DB\Table
     protected function listForeignKeys()
     {
         $adapter = $this->adapter;
-        $select  = $adapter->select('information_schema.KEY_COLUMN_USAGE')
+        $select = $adapter->select('information_schema.KEY_COLUMN_USAGE')
             ->setColumns(['CONSTRAINT_NAME', 'TABLE_NAME', 'COLUMN_NAME', 'REFERENCED_TABLE_NAME', 'REFERENCED_COLUMN_NAME'])
             ->where('TABLE_SCHEMA = database()')
             ->where('TABLE_NAME = ?', $this->table_name)
@@ -76,8 +76,8 @@ class Table extends \Owl\Service\DB\Table
 
             if (!isset($result[$constraint_name])) {
                 $result[$constraint_name] = [
-                    'name'              => $constraint_name,
-                    'reference_table'   => $row['REFERENCED_TABLE_NAME'],
+                    'name' => $constraint_name,
+                    'reference_table' => $row['REFERENCED_TABLE_NAME'],
                     'reference_columns' => [],
                 ];
             }

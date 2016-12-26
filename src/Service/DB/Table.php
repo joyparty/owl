@@ -10,7 +10,9 @@ abstract class Table
     protected $foreign_keys;
 
     /**
-     * @return [
+     * @return array
+     *
+     * [
      *     (string) => [
      *         'primary_key' => (boolean),
      *         'type' => (string),
@@ -28,7 +30,9 @@ abstract class Table
     abstract protected function listColumns();
 
     /**
-     * @return [
+     * @return array
+     *
+     * [
      *     [
      *         'name' => (string),
      *         'columns' => [(string), ...],
@@ -41,7 +45,9 @@ abstract class Table
     abstract protected function listIndexes();
 
     /**
-     * @return [
+     * @return array
+     *
+     * [
      *     [
      *         'name' => (string),
      *         'reference_table' => (string),
@@ -56,7 +62,7 @@ abstract class Table
 
     public function __construct(Adapter $adapter, $table_name)
     {
-        $this->adapter    = $adapter;
+        $this->adapter = $adapter;
         $this->table_name = $table_name;
     }
 
@@ -67,8 +73,8 @@ abstract class Table
 
     public function reset()
     {
-        $this->columns      = null;
-        $this->indexes      = null;
+        $this->columns = null;
+        $this->indexes = null;
         $this->foreign_keys = null;
     }
 

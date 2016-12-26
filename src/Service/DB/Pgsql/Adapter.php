@@ -42,7 +42,7 @@ class Adapter extends \Owl\Service\DB\Adapter
     public function parseTableName($table)
     {
         $table = str_replace('"', '', $table);
-        $pos   = strpos($table, '.');
+        $pos = strpos($table, '.');
 
         if ($pos) {
             list($schema, $table) = explode('.', $table, 2);
