@@ -161,7 +161,7 @@ abstract class Adapter extends \Owl\Service
         : is_array($params) ? $params : array_slice(func_get_args(), 1);
 
         Logger::log('debug', 'database execute', [
-            'sql' => ($sql instanceof \PDOStatement) ? $sql->queryString : $sql,
+            'sql' => ($sql instanceof \PDOStatement) ? $sql->queryString : (string) $sql,
             'parameters' => $params,
         ]);
 
