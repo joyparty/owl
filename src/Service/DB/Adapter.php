@@ -1,4 +1,5 @@
 <?php
+
 namespace Owl\Service\DB;
 
 use Owl\Logger;
@@ -155,7 +156,7 @@ abstract class Adapter extends \Owl\Service
 
     public function execute($sql, $params = null)
     {
-        $params = $params === null
+        $params = null === $params
         ? []
         : is_array($params) ? $params : array_slice(func_get_args(), 1);
 
@@ -201,7 +202,7 @@ abstract class Adapter extends \Owl\Service
             return $value;
         }
 
-        if ($value === null) {
+        if (null === $value) {
             return 'NULL';
         }
 
@@ -267,7 +268,7 @@ abstract class Adapter extends \Owl\Service
 
     public function update($table, array $row, $where = null, $params = null)
     {
-        $where_params = ($where === null || $params === null)
+        $where_params = (null === $where || null === $params)
         ? []
         : is_array($params) ? $params : array_slice(func_get_args(), 3);
 
@@ -289,7 +290,7 @@ abstract class Adapter extends \Owl\Service
 
     public function delete($table, $where = null, $params = null)
     {
-        $params = ($where === null || $params === null)
+        $params = (null === $where || null === $params)
         ? []
         : is_array($params) ? $params : array_slice(func_get_args(), 2);
 
