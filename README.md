@@ -1,11 +1,1 @@
-# Installation
-
-## Composer
-
-```json
-{
-    "require": {
-        "yeaha/owl-service": "1.0.*"
-    }
-}
-```
+# Owl Framework
