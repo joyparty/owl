@@ -1,0 +1,28 @@
+{
+    "name": "yeaha/owl-service",
+    "description": "Database and other storage service adapter",
+    "keywords": ["database", "mysql", "postgresql", "redis"],
+    "homepage": "https://github.com/yeaha/owl-service",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "YangYi",
+            "email": "yangyi.cn.gz@gmail.com",
+            "homepage": "https://github.com/yeaha"
+        }
+    ],
+    "require": {
+        "php": ">=5.6.0",
+        "yeaha/owl-core": "1.0.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Owl\\Service\\": "src/Service/",
+            "Owl\\": "src"
+        },
+        "files": ["src/functions.php"]
+    },
+    "autoload-dev": {
+        "psr-4": {"Tests\\": "tests/"}
+    }
+}
