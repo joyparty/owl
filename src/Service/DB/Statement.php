@@ -67,7 +67,7 @@ class Statement
      *
      * @return array
      */
-    public function getAll($column = null)
+    public function getAll($column = null): array
     {
         if (!$column) {
             return $this->fetchAll();

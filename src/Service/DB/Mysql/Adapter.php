@@ -29,14 +29,14 @@ class Adapter extends \Owl\Service\DB\Adapter
         return $this->execute('SELECT last_insert_id()')->getCol();
     }
 
-    public function enableBufferedQuery()
+    public function enableBufferedQuery(): self
     {
         $this->setAttribute(\PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);
 
         return $this;
     }
 
-    public function disableBufferedQuery()
+    public function disableBufferedQuery(): self
     {
         $this->setAttribute(\PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, false);
 
@@ -46,7 +46,7 @@ class Adapter extends \Owl\Service\DB\Adapter
     /**
      * @return string[]
      */
-    public function getTables()
+    public function getTables(): array
     {
         return $this->select('information_schema.TABLES')
                     ->setColumns('TABLE_NAME')

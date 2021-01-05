@@ -5,17 +5,17 @@ namespace Owl\Service\DB\Sqlite;
 // @FIXME
 class Table extends \Owl\Service\DB\Table
 {
-    protected function listColumns()
+    protected function listColumns(): array
     {
         return [];
     }
 
-    protected function listIndexes()
+    protected function listIndexes(): array
     {
         return [];
     }
 
-    protected function listForeignKeys()
+    protected function listForeignKeys(): array
     {
         return [];
     }

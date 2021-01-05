@@ -41,7 +41,7 @@ class Memcached extends \Owl\Service
      *
      * @throws
      */
-    public function connect()
+    public function connect(): \Memcached
     {
         if ($this->memcached) {
             return $this->memcached;

@@ -15,7 +15,7 @@ class Adapter extends \Owl\Service\DB\Adapter
         return $this->execute('SELECT last_insert_rowid()')->getCol();
     }
 
-    public function getTables()
+    public function getTables(): array
     {
         // @FIXME
         throw new \Exception('Sqlite\Adapter::getTables() not implement');

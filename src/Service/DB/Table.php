@@ -27,7 +27,7 @@ abstract class Table
      *     ...
      * ]
      */
-    abstract protected function listColumns();
+    abstract protected function listColumns(): array;
 
     /**
      * @return array
@@ -42,7 +42,7 @@ abstract class Table
      *     ...
      * ]
      */
-    abstract protected function listIndexes();
+    abstract protected function listIndexes(): array;
 
     /**
      * @return array
@@ -58,7 +58,7 @@ abstract class Table
      *     ],
      * ]
      */
-    abstract protected function listForeignKeys();
+    abstract protected function listForeignKeys(): array;
 
     /**
      * @param Adapter $adapter
@@ -95,9 +95,9 @@ abstract class Table
     /**
      * 获得数据库连接对象.
      *
-     * @return \Owl\Service\DB\Adapter
+     * @return Adapter
      */
-    public function getAdapter()
+    public function getAdapter(): Adapter
     {
         return $this->adapter;
     }
@@ -107,7 +107,7 @@ abstract class Table
      *
      * @return array
      */
-    public function getColumns()
+    public function getColumns(): array
     {
         if ($this->columns === null) {
             $this->columns = $this->listColumns();
@@ -123,7 +123,7 @@ abstract class Table
      *
      * @return array
      */
-    public function getColumn($column_name)
+    public function getColumn($column_name): array
     {
         $columns = $this->getColumns();
 
@@ -135,7 +135,7 @@ abstract class Table
      *
      * @return array
      */
-    public function getIndexes()
+    public function getIndexes(): array
     {
         if ($this->indexes === null) {
             $this->indexes = $this->listIndexes();
@@ -151,7 +151,7 @@ abstract class Table
      *
      * @return bool
      */
-    public function hasColumn($column_name)
+    public function hasColumn($column_name): bool
     {
         $columns = $this->getColumns();
 
@@ -165,7 +165,7 @@ abstract class Table
      *
      * @return bool
      */
-    public function hasIndex($index_name)
+    public function hasIndex($index_name): bool
     {
         foreach ($this->getIndexes() as $index) {
             if ($index['name'] === $index_name) {
@@ -183,7 +183,7 @@ abstract class Table
      *
      * @return array
      */
-    public function getForeignKeys()
+    public function getForeignKeys(): array
     {
         if ($this->foreign_keys === null) {
             $this->foreign_keys = $this->listForeignKeys();
@@ -197,7 +197,7 @@ abstract class Table
      *
      * @return array
      */
-    public function getReferenceTables()
+    public function getReferenceTables(): array
     {
         $tables = [];
 
@@ -217,7 +217,7 @@ abstract class Table
      *
      * @return array
      */
-    public function getIndexesOfColumn($column_name)
+    public function getIndexesOfColumn($column_name): array
     {
         $result = [];
 
@@ -231,9 +231,9 @@ abstract class Table
     }
 
     /**
-     * 创建查询对象
+     * 创建查询对象.
      *
-     * @return \Owl\Service\DB\Select
+     * @return Select
      */
     public function select()
     {

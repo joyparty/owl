@@ -53,7 +53,7 @@ class Redis extends \Owl\Service
      * @return \Redis
      * @throws
      */
-    public function connect()
+    public function connect(): \Redis
     {
         if ($this->handler) {
             return $this->handler;
@@ -96,7 +96,7 @@ class Redis extends \Owl\Service
     /**
      * @return self
      */
-    public function disconnect()
+    public function disconnect(): self
     {
         if ($this->handler instanceof \Redis) {
             $this->handler->close();
@@ -111,7 +111,7 @@ class Redis extends \Owl\Service
      *
      * @return bool
      */
-    protected function isPersistent()
+    protected function isPersistent(): bool
     {
         $config = $this->config;
 

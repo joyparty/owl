@@ -29,7 +29,7 @@ class Adapter extends \Owl\Service\DB\Adapter
     /**
      * @return string[]
      */
-    public function getTables()
+    public function getTables(): array
     {
         $select = $this->select('information_schema.tables')
                        ->setColumns('table_schema', 'table_name')
@@ -43,7 +43,15 @@ class Adapter extends \Owl\Service\DB\Adapter
         return $tables;
     }
 
-    public function parseTableName($table)
+    /**
+     * @param string $table
+     *
+     * @return array [
+     *      0 => <string>,  // schema
+     *      1 => <string>,  // table
+     * ]
+     */
+    public function parseTableName($table): array
     {
         $table = str_replace('"', '', $table);
         $pos = strpos($table, '.');

@@ -23,7 +23,7 @@ class Mongodb extends \Owl\Service
         return call_user_func_array([$this->connect(), $method], $args);
     }
 
-    public function disconnect()
+    public function disconnect(): bool
     {
         if ($this->isConnected()) {
             $this->client->close();
@@ -34,18 +34,18 @@ class Mongodb extends \Owl\Service
         return true;
     }
 
-    public function connect()
+    public function connect(): \MongoClient
     {
         if (!$this->client) {
             $this->client = new \MongoClient($this->getConfig('dsn'), $this->getConfig('options') ?: []);
-        } elseif (!$this->client->connected) {
+        } else if (!$this->client->connected) {
             $this->client->connect();
         }
 
         return $this->client;
     }
 
-    public function isConnected()
+    public function isConnected(): bool
     {
         return $this->client && $this->client->connected;
     }
@@ -62,7 +62,7 @@ class Mongodb extends \Owl\Service
      * $collection = $mongo->getCollection('db.collection');
      * $collection = $mongo->getCollection(['db', 'collection']);
      */
-    public function getCollection($db, $collection = null)
+    public function getCollection($db, $collection = null): \MongoCollection
     {
         if ($db instanceof \MongoCollection) {
             return $db;
@@ -119,7 +119,7 @@ class Mongodb extends \Owl\Service
      *
      * @return array
      */
-    public static function normalizeConfig(array $config)
+    public static function normalizeConfig(array $config): array
     {
         $config = array_merge([
             'dsn' => sprintf('mongodb://%s:%s', ini_get('mongo.default_host'), ini_get('mongo.default_port')),

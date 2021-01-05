@@ -4,7 +4,7 @@ namespace Owl\Service\DB\Mysql;
 
 class Table extends \Owl\Service\DB\Table
 {
-    protected function listColumns()
+    protected function listColumns(): array
     {
         $adapter = $this->adapter;
         $select = $adapter->select('information_schema.COLUMNS')
@@ -39,7 +39,7 @@ class Table extends \Owl\Service\DB\Table
     /**
      * @return array
      */
-    protected function listIndexes()
+    protected function listIndexes(): array
     {
         $adapter = $this->adapter;
         $indexes = [];
@@ -65,7 +65,7 @@ class Table extends \Owl\Service\DB\Table
         return array_values($indexes);
     }
 
-    protected function listForeignKeys()
+    protected function listForeignKeys(): array
     {
         $adapter = $this->adapter;
         $select = $adapter->select('information_schema.KEY_COLUMN_USAGE')

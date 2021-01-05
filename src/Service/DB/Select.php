@@ -71,8 +71,8 @@ class Select
     protected $processor;
 
     /**
-     * @param \Owl\Service\DB\Adapter $adapter
-     * @param string|Expr|Select      $table
+     * @param Adapter $adapter
+     * @param string|Expr|Select $table
      */
     public function __construct(Adapter $adapter, $table)
     {
@@ -100,9 +100,9 @@ class Select
     /**
      * 获取数据库连接.
      *
-     * @return \Owl\Service\DB\Adapter
+     * @return Adapter
      */
-    public function getAdapter()
+    public function getAdapter(): Adapter
     {
         return $this->adapter;
     }
@@ -119,7 +119,7 @@ class Select
      * $select->setColumns(array('foo', 'bar'));
      * $select->setColumns('foo', 'bar', new DB\Expr('foo + bar'));
      */
-    public function setColumns($columns)
+    public function setColumns($columns): self
     {
         $this->columns = is_array($columns) ? $columns : func_get_args();
 
@@ -132,7 +132,7 @@ class Select
      * OR关系必须写到同一个where条件内.
      *
      * @param string $where
-     * @param mixed... [$params]
+     * @param ?mixed[] $params
      *
      * @return $this
      *
@@ -140,11 +140,11 @@ class Select
      * $select->where('foo = ?', 1)->where('bar = ?', 2);
      * $select->where('foo = ? or bar = ?', 1, 2);
      */
-    public function where($where, $params = null)
+    public function where($where, $params = null): self
     {
         $params = $params === null
                 ? []
-                : is_array($params) ? $params : array_slice(func_get_args(), 1);
+                : (is_array($params) ? $params : array_slice(func_get_args(), 1));
 
         $this->where[] = [$where, $params];
 
@@ -172,7 +172,7 @@ class Select
      *
      * $foo_select->whereIn('id', $bar_select->setcolumns('foo_id')->where('bar > 1'));
      */
-    public function whereIn($column, $relation)
+    public function whereIn($column, $relation): self
     {
         return $this->whereSub($column, $relation, true);
     }
@@ -183,9 +183,9 @@ class Select
      * @param string       $column
      * @param array|Select $relation
      *
-     * @return $this
+     * @return self
      */
-    public function whereNotIn($column, $relation)
+    public function whereNotIn($column, $relation): self
     {
         return $this->whereSub($column, $relation, false);
     }
@@ -197,13 +197,13 @@ class Select
      * @param string [$having]
      * @param mixed... [$having_params]
      *
-     * @return $this
+     * @return self
      *
      * @example
      * // select foo, count(1) from foobar group by foo having count(1) > 2
      * $select->setcolumns('foo', new Expr('count(1) as count'))->groupBy('foo', 'count(1) > ?', 2);
      */
-    public function groupBy($columns, $having = null, $having_params = null)
+    public function groupBy($columns, $having = null, $having_params = null): self
     {
         $having_params = ($having === null || $having_params === null)
                        ? []
@@ -219,7 +219,7 @@ class Select
      *
      * @param string|Expr
      *
-     * @return $this
+     * @return self
      *
      * @example
      *
@@ -228,7 +228,7 @@ class Select
      * $select->orderBy(['foo' => 'desc', 'bar' => 'asc']);
      * $select->orderBy('foo', 'bar', new Expr('baz desc'));
      */
-    public function orderBy($expressions)
+    public function orderBy($expressions): self
     {
         $expressions = is_array($expressions) ? $expressions : func_get_args();
 
@@ -264,7 +264,7 @@ class Select
      *
      * @return self
      */
-    public function limit($count)
+    public function limit($count): self
     {
         $this->limit = abs((int) $count);
 
@@ -278,7 +278,7 @@ class Select
      *
      * @return self
      */
-    public function offset($count)
+    public function offset($count): self
     {
         $this->offset = abs((int) $count);
 
@@ -288,9 +288,9 @@ class Select
     /**
      * 执行查询，返回查询结果句柄对象.
      *
-     * @return \Owl\Service\DB\Statement
+     * @return Statement
      */
-    public function execute()
+    public function execute(): Statement
     {
         list($sql, $params) = $this->compile();
 
@@ -305,7 +305,7 @@ class Select
      *      1 => <array>,     // 参数值列表
      * ]
      */
-    public function compile()
+    public function compile(): array
     {
         $adapter = $this->adapter;
         $sql = 'SELECT ';
@@ -383,7 +383,7 @@ class Select
      * @example
      * $select->setPage(2, 10)->get();
      */
-    public function setPage($page, $size)
+    public function setPage($page, $size): self
     {
         $this->limit($size)->offset(($page - 1) * $size);
 
@@ -401,7 +401,7 @@ class Select
      * @example
      * $select->getPage(2, 10);
      */
-    public function getPage($page, $size)
+    public function getPage($page, $size): array
     {
         return $this->setPage($page, $size)->get();
     }
@@ -425,7 +425,7 @@ class Select
      *      'last' => <integer>,        // 最后一页
      * ]
      */
-    public function getPageInfo($current, $size, $total = null)
+    public function getPageInfo($current, $size, $total = null): array
     {
         if ($total === null) {
             $limit = $this->limit;
@@ -451,9 +451,9 @@ class Select
      *
      * @param callable $processor
      *
-     * @return $this
+     * @return self
      */
-    public function setProcessor($processor)
+    public function setProcessor($processor): self
     {
         if ($processor && !is_callable($processor)) {
             throw new \UnexpectedValueException('Select processor is not callable');
@@ -481,11 +481,11 @@ class Select
     /**
      * 获得所有的查询结果.
      *
-     * @param int [$limit]
+     * @param ?int $limit
      *
      * @return array
      */
-    public function get($limit = null)
+    public function get($limit = null): array
     {
         if ($limit !== null) {
             $this->limit($limit);
@@ -539,7 +539,7 @@ class Select
      *
      * @return int affected row count
      */
-    public function delete()
+    public function delete(): int
     {
         list($where, $params) = $this->compileWhere();
 
@@ -563,7 +563,7 @@ class Select
      *
      * @return int affected row count
      */
-    public function update(array $row)
+    public function update(array $row): int
     {
         list($where, $params) = $this->compileWhere();
 
@@ -645,9 +645,9 @@ class Select
      * @param array|Select $relation
      * @param bool         $in
      *
-     * @return $this
+     * @return self
      */
-    protected function whereSub($column, $relation, $in)
+    protected function whereSub($column, $relation, $in): self
     {
         $column = $this->adapter->quoteIdentifier($column);
         $params = [];
@@ -673,13 +673,12 @@ class Select
     /**
      * 把from参数编译为select 子句.
      *
-     * @return
-     * array(
-     *     (string),    // from 子句
-     *     (array),     // 查询参数
-     * )
+     * @return array [
+     *     0 => <string>,    // from 子句
+     *     1 => <array>,     // 查询参数
+     * ]
      */
-    protected function compileFrom()
+    protected function compileFrom(): array
     {
         $params = [];
 
@@ -698,13 +697,12 @@ class Select
     /**
      * 把查询条件参数编译为where子句.
      *
-     * @return
-     * array(
-     *     (string),    // where 子句
-     *     (array),     // 查询参数
-     * )
+     * @return array [
+     *     0 => <string>,    // where 子句
+     *     1 => <array>,     // 查询参数
+     * ]
      */
-    protected function compileWhere()
+    protected function compileWhere(): array
     {
         if (!$this->where) {
             return ['', []];
@@ -728,13 +726,12 @@ class Select
     /**
      * 编译group by 子句.
      *
-     * @return
-     * array(
-     *     (string),    // group by 子句
-     *     (array),     // 查询参数
-     * )
+     * @return array [
+     *     0 => <string>,    // group by 子句
+     *     1 => <array>,     // 查询参数
+     * ]
      */
-    protected function compileGroupBy()
+    protected function compileGroupBy(): array
     {
         if (!$this->group_by) {
             return ['', []];
@@ -755,7 +752,7 @@ class Select
         return [$sql, $having_params];
     }
 
-    public static function buildPageInfo($total, $page_size, $current_page = 1)
+    public static function buildPageInfo($total, $page_size, $current_page = 1): array
     {
         $total = (int) $total;
         $page_size = (int) $page_size;

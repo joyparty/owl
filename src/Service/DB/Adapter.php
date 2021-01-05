@@ -18,7 +18,7 @@ abstract class Adapter extends \Owl\Service
     /**
      * @return string[]
      */
-    abstract public function getTables();
+    abstract public function getTables(): array;
 
     public function __construct(array $config = [])
     {
@@ -50,7 +50,7 @@ abstract class Adapter extends \Owl\Service
     /**
      * @return bool
      */
-    public function isConnected()
+    public function isConnected(): bool
     {
         return $this->handler instanceof \PDO;
     }
@@ -59,7 +59,7 @@ abstract class Adapter extends \Owl\Service
      * @return \PDO
      * @throws
      */
-    public function connect()
+    public function connect(): \PDO
     {
         if ($this->isConnected()) {
             return $this->handler;
@@ -88,7 +88,7 @@ abstract class Adapter extends \Owl\Service
         return $this->handler = $handler;
     }
 
-    public function disconnect()
+    public function disconnect(): self
     {
         if ($this->isConnected()) {
             $this->rollbackAll();
@@ -100,7 +100,11 @@ abstract class Adapter extends \Owl\Service
         return $this;
     }
 
-    public function begin()
+    /**
+     * @return bool
+     * @throws \Exception
+     */
+    public function begin(): bool
     {
         if ($this->in_transaction) {
             if (!$this->support_savepoint) {
@@ -118,7 +122,7 @@ abstract class Adapter extends \Owl\Service
         return true;
     }
 
-    public function commit()
+    public function commit(): bool
     {
         if ($this->in_transaction) {
             if ($this->savepoints) {
@@ -133,7 +137,7 @@ abstract class Adapter extends \Owl\Service
         return true;
     }
 
-    public function rollback()
+    public function rollback(): bool
     {
         if ($this->in_transaction) {
             if ($this->savepoints) {
@@ -187,7 +191,7 @@ abstract class Adapter extends \Owl\Service
         return Statement::factory($sth);
     }
 
-    public function prepare()
+    public function prepare(): Statement
     {
         $handler = $this->connect();
         $statement = call_user_func_array([$handler, 'prepare'], func_get_args());
@@ -241,15 +245,15 @@ abstract class Adapter extends \Owl\Service
         return new Expr(implode('.', $result));
     }
 
-    public function select($table)
+    public function select($table): Select
     {
-        return new \Owl\Service\DB\Select($this, $table);
+        return new Select($this, $table);
     }
 
     /**
      * @param string $table_name
      *
-     * @return \Owl\Service\DB\Table
+     * @return Table
      */
     public function getTable($table_name)
     {
@@ -283,11 +287,11 @@ abstract class Adapter extends \Owl\Service
         return $this->execute($sth, $params)->rowCount();
     }
 
-    public function update($table, array $row, $where = null, $params = null)
+    public function update($table, array $row, $where = null, $params = null): int
     {
         $where_params = (null === $where || null === $params)
         ? []
-        : is_array($params) ? $params : array_slice(func_get_args(), 3);
+        : (is_array($params) ? $params : array_slice(func_get_args(), 3));
 
         $params = [];
         foreach ($row as $value) {
@@ -305,11 +309,11 @@ abstract class Adapter extends \Owl\Service
         return $this->execute($sth, $params)->rowCount();
     }
 
-    public function delete($table, $where = null, $params = null)
+    public function delete($table, $where = null, $params = null): int
     {
         $params = (null === $where || null === $params)
         ? []
-        : is_array($params) ? $params : array_slice(func_get_args(), 2);
+        : (is_array($params) ? $params : array_slice(func_get_args(), 2));
 
         $sth = $this->prepareDelete($table, $where);
 
@@ -384,7 +388,7 @@ abstract class Adapter extends \Owl\Service
      *
      * @deprecated
      */
-    public function getColumns($table_name)
+    public function getColumns($table_name): array
     {
         return $this->getTable($table_name)->getColumns();
     }
@@ -396,7 +400,7 @@ abstract class Adapter extends \Owl\Service
      *
      * @deprecated
      */
-    public function getIndexes($table_name)
+    public function getIndexes($table_name): array
     {
         return $this->getTable($table_name)->getIndexes();
     }
