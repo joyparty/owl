@@ -1,4 +1,5 @@
 <?php
+
 namespace Owl\Service\DB\Sqlite;
 
 if (!extension_loaded('pdo_sqlite')) {

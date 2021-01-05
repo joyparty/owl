@@ -1,4 +1,5 @@
 <?php
+
 namespace Owl\Service\DB\Pgsql;
 
 class Table extends \Owl\Service\DB\Table

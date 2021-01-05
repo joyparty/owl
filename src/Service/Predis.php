@@ -1,4 +1,5 @@
 <?php
+
 namespace Owl\Service;
 
 use Owl\Logger;
@@ -9,6 +10,8 @@ if (!class_exists('\Predis\Client')) {
 }
 
 /**
+ * @mixin \Predis\Client
+ *
  * @example
  * $parameters = [
  *     'scheme' => 'tcp',

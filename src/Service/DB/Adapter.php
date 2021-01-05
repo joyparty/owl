@@ -16,7 +16,7 @@ abstract class Adapter extends \Owl\Service
     abstract public function lastID($table = null, $column = null);
 
     /**
-     * @return array
+     * @return string[]
      */
     abstract public function getTables();
 
@@ -47,11 +47,18 @@ abstract class Adapter extends \Owl\Service
         : $this->connect()->$method();
     }
 
+    /**
+     * @return bool
+     */
     public function isConnected()
     {
         return $this->handler instanceof \PDO;
     }
 
+    /**
+     * @return \PDO
+     * @throws
+     */
     public function connect()
     {
         if ($this->isConnected()) {
@@ -209,6 +216,10 @@ abstract class Adapter extends \Owl\Service
         return $this->connect()->quote($value);
     }
 
+    /**
+     * @param string|array|Expr $identifier
+     * @return array|Expr
+     */
     public function quoteIdentifier($identifier)
     {
         if (is_array($identifier)) {
@@ -236,6 +247,8 @@ abstract class Adapter extends \Owl\Service
     }
 
     /**
+     * @param string $table_name
+     *
      * @return \Owl\Service\DB\Table
      */
     public function getTable($table_name)
@@ -245,6 +258,10 @@ abstract class Adapter extends \Owl\Service
         return new $class($this, $table_name);
     }
 
+    /**
+     * @param string $table_name
+     * @return bool
+     */
     public function hasTable($table_name)
     {
         $table_name = str_replace($this->identifier_symbol, '', $table_name);
@@ -361,6 +378,10 @@ abstract class Adapter extends \Owl\Service
     }
 
     /**
+     * @param string
+     *
+     * @return array
+     *
      * @deprecated
      */
     public function getColumns($table_name)
@@ -369,6 +390,10 @@ abstract class Adapter extends \Owl\Service
     }
 
     /**
+     * @param string
+     *
+     * @return array
+     *
      * @deprecated
      */
     public function getIndexes($table_name)

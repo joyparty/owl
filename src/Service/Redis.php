@@ -6,6 +6,9 @@ if (!extension_loaded('redis')) {
     throw new \RuntimeException('Require redis extension!');
 }
 
+/**
+ * @mixin \Redis
+ */
 class Redis extends \Owl\Service
 {
     protected $config = [
@@ -46,6 +49,10 @@ class Redis extends \Owl\Service
              : $this->connect()->$fn();
     }
 
+    /**
+     * @return \Redis
+     * @throws
+     */
     public function connect()
     {
         if ($this->handler) {
@@ -86,6 +93,9 @@ class Redis extends \Owl\Service
         return $this->handler = $handler;
     }
 
+    /**
+     * @return self
+     */
     public function disconnect()
     {
         if ($this->handler instanceof \Redis) {
@@ -96,6 +106,11 @@ class Redis extends \Owl\Service
         return $this;
     }
 
+    /**
+     * 是否为持久连接.
+     *
+     * @return bool
+     */
     protected function isPersistent()
     {
         $config = $this->config;

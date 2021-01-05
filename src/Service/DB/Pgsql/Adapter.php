@@ -1,4 +1,5 @@
 <?php
+
 namespace Owl\Service\DB\Pgsql;
 
 if (!extension_loaded('pdo_pgsql')) {
@@ -25,6 +26,9 @@ class Adapter extends \Owl\Service\DB\Adapter
         return $this->execute($sql)->getCol();
     }
 
+    /**
+     * @return string[]
+     */
     public function getTables()
     {
         $select = $this->select('information_schema.tables')

@@ -193,7 +193,7 @@ class Select
     /**
      * group by 条件.
      *
-     * @param array $columns
+     * @param string|array $columns
      * @param string [$having]
      * @param mixed... [$having_params]
      *
@@ -262,7 +262,7 @@ class Select
      *
      * @param int $count
      *
-     * @return $this
+     * @return self
      */
     public function limit($count)
     {
@@ -275,7 +275,8 @@ class Select
      * offset语句.
      *
      * @param int $count
-     * @param $this
+     *
+     * @return self
      */
     public function offset($count)
     {
@@ -285,7 +286,7 @@ class Select
     }
 
     /**
-     * 执行查询，返回查询结果句柄对象
+     * 执行查询，返回查询结果句柄对象.
      *
      * @return \Owl\Service\DB\Statement
      */
@@ -299,11 +300,10 @@ class Select
     /**
      * 根据当前查询对象的各项参数，编译为具体的select语句及查询参数.
      *
-     * @return
-     * array(
-     *     (string),    // select语句
-     *     (array)      // 查询参数值
-     * )
+     * @return array [
+     *      0 => <string>,    // select语句
+     *      1 => <array>,     // 参数值列表
+     * ]
      */
     public function compile()
     {
@@ -378,7 +378,7 @@ class Select
      * @param int $page
      * @param int $size
      *
-     * @return $this
+     * @return self
      *
      * @example
      * $select->setPage(2, 10)->get();
@@ -411,20 +411,19 @@ class Select
      *
      * @param int $current 当前页
      * @param int $size    每页多少条
-     * @param int [$total]  一共有多少条，不指定就到数据库内查询
+     * @param ?int $total  一共有多少条，不指定就到数据库内查询
      *
-     * @return
-     * array(
-     *  'total' => (integer),       // 一共有多少条数据
-     *  'size' => (integer),        // 每页多少条
-     *  'from' => (integer),        // 本页开始的序号
-     *  'to' => (integer),          // 本页结束的序号
-     *  'first' => 1,               // 第一页
-     *  'prev' => (integer|null),   // 上一页，null说明没有上一页
-     *  'current' => (integer),     // 本页页码
-     *  'next' => (integer|null),   // 下一页，null说明没有下一页
-     *  'last' => (integer),        // 最后一页
-     * )
+     * @return array [
+     *      'total' => <integer>,       // 一共有多少条数据
+     *      'size' => <integer>,        // 每页多少条
+     *      'from' => <integer>,        // 本页开始的序号
+     *      'to' => <integer>,          // 本页结束的序号
+     *      'first' => 1,               // 第一页
+     *      'prev' => <integer|null>,   // 上一页，null说明没有上一页
+     *      'current' => <integer>,     // 本页页码
+     *      'next' => <integer|null>,   // 下一页，null说明没有下一页
+     *      'last' => <integer>,        // 最后一页
+     * ]
      */
     public function getPageInfo($current, $size, $total = null)
     {

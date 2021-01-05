@@ -60,6 +60,10 @@ abstract class Table
      */
     abstract protected function listForeignKeys();
 
+    /**
+     * @param Adapter $adapter
+     * @param string $table_name
+     */
     public function __construct(Adapter $adapter, $table_name)
     {
         $this->adapter = $adapter;
@@ -89,7 +93,7 @@ abstract class Table
     }
 
     /**
-     * 获得数据库连接对象
+     * 获得数据库连接对象.
      *
      * @return \Owl\Service\DB\Adapter
      */
@@ -114,6 +118,8 @@ abstract class Table
 
     /**
      * 获得指定字段的信息.
+     *
+     * @param string $column_name
      *
      * @return array
      */
@@ -251,8 +257,6 @@ abstract class Table
      * 返回被更新的行数.
      *
      * @param array  $row
-     * @param string $where
-     * @param mixed  $parameters
      *
      * @return int
      */
@@ -266,9 +270,6 @@ abstract class Table
 
     /**
      * 删除记录，允许指定条件.
-     *
-     * @param string $where
-     * @param mixed  $parameters
      *
      * @return int
      */

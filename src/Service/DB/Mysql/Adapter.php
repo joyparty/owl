@@ -1,10 +1,14 @@
 <?php
+
 namespace Owl\Service\DB\Mysql;
 
 if (!extension_loaded('pdo_mysql')) {
     throw new \Exception('Require "pdo_mysql" extension.');
 }
 
+/**
+ * @mixin \PDO
+ */
 class Adapter extends \Owl\Service\DB\Adapter
 {
     protected $identifier_symbol = '`';
@@ -39,6 +43,9 @@ class Adapter extends \Owl\Service\DB\Adapter
         return $this;
     }
 
+    /**
+     * @return string[]
+     */
     public function getTables()
     {
         return $this->select('information_schema.TABLES')

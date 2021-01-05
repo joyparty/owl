@@ -1,4 +1,5 @@
 <?php
+
 namespace Owl\Service\DB\Mysql;
 
 class Table extends \Owl\Service\DB\Table
@@ -35,6 +36,9 @@ class Table extends \Owl\Service\DB\Table
         return $columns;
     }
 
+    /**
+     * @return array
+     */
     protected function listIndexes()
     {
         $adapter = $this->adapter;

@@ -1,6 +1,10 @@
 <?php
+
 namespace Owl\Service\DB;
 
+/**
+ * @mixin \PDOStatement
+ */
 class Statement
 {
     use \Owl\Traits\Decorator;
@@ -59,7 +63,7 @@ class Statement
     /**
      * 返回所有的查询结果，允许以指定的字段内容为返回数组的key.
      *
-     * @param string $col
+     * @param string $column
      *
      * @return array
      */
@@ -77,7 +81,13 @@ class Statement
         return $rowset;
     }
 
-    public static function factory($statement): Statement
+    /**
+     * @param $statement
+     *
+     * @return Statement
+     * @throws
+     */
+    public static function factory($statement)
     {
         if ($statement instanceof self) {
             return $statement;

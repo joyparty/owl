@@ -51,6 +51,12 @@ class Container extends \Owl\Container
         return $this;
     }
 
+    /**
+     * @param string $id
+     * @param \Closure $handler
+     *
+     * @return self
+     */
     public function setRouter($id, \Closure $handler)
     {
         $this->router[$id] = $handler->bindTo($this);
@@ -58,6 +64,12 @@ class Container extends \Owl\Container
         return $this;
     }
 
+    /**
+     * @param string $id
+     *
+     * @return mixed
+     * @throws
+     */
     public function get($id)
     {
         if ($this->has($id)) {
@@ -89,6 +101,10 @@ class Container extends \Owl\Container
         parent::refresh();
     }
 
+    /**
+     * @param string $id
+     * @param array $options
+     */
     protected function setService($id, array $options)
     {
         $this->set($id, function () use ($options) {

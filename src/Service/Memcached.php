@@ -7,6 +7,8 @@ if (!extension_loaded('memcached')) {
 }
 
 /**
+ * @mixin \Memcached
+ *
  * @example
  * $config = [
  *     'persistent_id' => 'foobar',     // optional
@@ -34,6 +36,11 @@ class Memcached extends \Owl\Service
              : $memcached->$method();
     }
 
+    /**
+     * @return \Memcached
+     *
+     * @throws
+     */
     public function connect()
     {
         if ($this->memcached) {

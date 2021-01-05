@@ -6,6 +6,9 @@ if (!extension_loaded('mongo')) {
     throw new \Exception('Require "mongo" extension');
 }
 
+/**
+ * @mixin \MongoClient
+ */
 class Mongodb extends \Owl\Service
 {
     private $client;
@@ -48,6 +51,12 @@ class Mongodb extends \Owl\Service
     }
 
     /**
+     * @param string|array|\MongoCollection $db
+     * @param ?string $collection
+     *
+     * @return \MongoCollection
+     * @throws
+     *
      * @example
      * $collection = $mongo->getCollection('db', 'collection');
      * $collection = $mongo->getCollection('db.collection');
