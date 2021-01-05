@@ -1,20 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Service\DB;
 
 use Owl\Service\DB\Expr;
+use Owl\Service\DB\Select;
+use PHPUnit\Framework\TestCase;
 
-class SelectTest extends \PHPUnit_Framework_TestCase
+class SelectTest extends TestCase
 {
-    protected function select($table)
-    {
-        $adapter = new \Owl\Service\DB\Pgsql\Adapter([
-            'dsn' => 'pgsql:host=192.168.1.2;dbname=foobar',
-        ]);
-
-        return $adapter->select($table);
-    }
-
     public function testStandard()
     {
         $select = $this->select('mytable');
@@ -114,49 +109,58 @@ class SelectTest extends \PHPUnit_Framework_TestCase
 
     public function testUpdateWithoutWhere()
     {
-        $this->setExpectedException('\LogicException');
+        $this->expectException(\LogicException::class);
         $this->select('mytable')->update(['name' => 'yangyi']);
     }
 
     public function testUpdateWithLimit()
     {
-        $this->setExpectedException('\LogicException');
+        $this->expectException(\LogicException::class);
         $this->select('mytable')->where('id = 1')->limit(10)->update(['name' => 'yangyi']);
     }
 
     public function testUpdateWithOffset()
     {
-        $this->setExpectedException('\LogicException');
+        $this->expectException(\LogicException::class);
         $this->select('mytable')->where('id = 1')->offset(10)->update(['name' => 'yangyi']);
     }
 
     public function testUpdateWithGroupBy()
     {
-        $this->setExpectedException('\LogicException');
+        $this->expectException(\LogicException::class);
         $this->select('mytable')->where('id = 1')->groupBy('email')->update(['name' => 'yangyi']);
     }
 
     public function testDeleteWithoutWhere()
     {
-        $this->setExpectedException('\LogicException');
+        $this->expectException(\LogicException::class);
         $this->select('mytable')->delete();
     }
 
     public function testDeleteWithLimit()
     {
-        $this->setExpectedException('\LogicException');
+        $this->expectException(\LogicException::class);
         $this->select('mytable')->where('id = 1')->limit(10)->delete();
     }
 
     public function testDeleteWithOffset()
     {
-        $this->setExpectedException('\LogicException');
+        $this->expectException(\LogicException::class);
         $this->select('mytable')->where('id = 1')->offset(10)->delete();
     }
 
     public function testDeleteWithGroupBy()
     {
-        $this->setExpectedException('\LogicException');
+        $this->expectException(\LogicException::class);
         $this->select('mytable')->where('id = 1')->groupBy('email')->delete();
+    }
+
+    protected function select($table): Select
+    {
+        $adapter = new \Owl\Service\DB\Pgsql\Adapter([
+            'dsn' => 'pgsql:host=192.168.1.2;dbname=foobar',
+        ]);
+
+        return $adapter->select($table);
     }
 }
