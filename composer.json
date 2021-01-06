@@ -19,10 +19,11 @@
     },
     "autoload": {
         "psr-4": {
-            "Owl\\Service\\": "src/Service/",
-            "Owl\\": "src"
+            "Owl\\": "src/"
         },
-        "files": ["src/functions.php"]
+        "files": [
+            "src/Service/functions.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {"Tests\\": "tests/"}
