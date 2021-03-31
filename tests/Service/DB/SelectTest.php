@@ -158,7 +158,7 @@ class SelectTest extends TestCase
     protected function select($table): Select
     {
         $adapter = new \Owl\Service\DB\Pgsql\Adapter([
-            'dsn' => 'pgsql:host=192.168.1.2;dbname=foobar',
+            'dsn' => $_ENV['DSN'],
         ]);
 
         return $adapter->select($table);
