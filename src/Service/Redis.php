@@ -2,6 +2,8 @@
 
 namespace Owl\Service;
 
+use Owl\Service;
+
 if (!extension_loaded('redis')) {
     throw new \RuntimeException('Require redis extension!');
 }
@@ -9,7 +11,7 @@ if (!extension_loaded('redis')) {
 /**
  * @mixin \Redis
  */
-class Redis extends \Owl\Service
+class Redis extends Service
 {
     protected $config = [
         'host' => '127.0.0.1',
@@ -93,9 +95,6 @@ class Redis extends \Owl\Service
         return $this->handler = $handler;
     }
 
-    /**
-     * @return self
-     */
     public function disconnect(): self
     {
         if ($this->handler instanceof \Redis) {
