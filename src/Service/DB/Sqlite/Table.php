@@ -2,8 +2,10 @@
 
 namespace Owl\Service\DB\Sqlite;
 
+use Owl\Service\DB\Table as BaseTable;
+
 // @FIXME
-class Table extends \Owl\Service\DB\Table
+class Table extends BaseTable
 {
     protected function listColumns(): array
     {
