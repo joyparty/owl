@@ -2,6 +2,8 @@
 
 namespace Owl\Service;
 
+use Owl\Service;
+
 if (!extension_loaded('memcached')) {
     throw new \RuntimeException('Require "memcached" extension!');
 }
@@ -23,7 +25,7 @@ if (!extension_loaded('memcached')) {
  *
  * $memcached = new \Owl\Service\Memcached($config);
  */
-class Memcached extends \Owl\Service
+class Memcached extends Service
 {
     protected $memcached;
 
