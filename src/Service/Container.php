@@ -2,6 +2,10 @@
 
 namespace Owl\Service;
 
+use Closure;
+use Owl\Container as BaseContainer;
+use Owl\Traits\Singleton;
+
 /**
  * @example
  * $container = \Owl\Service\Container::getInstance();
@@ -36,9 +40,9 @@ namespace Owl\Service;
  * $master = $container->get('mysql.master');
  * $slave = $container->get('mysql.slave', 123);
  */
-class Container extends \Owl\Container
+class Container extends BaseContainer
 {
-    use \Owl\Traits\Singleton;
+    use Singleton;
 
     protected $router = [];
 
@@ -53,11 +57,11 @@ class Container extends \Owl\Container
 
     /**
      * @param string $id
-     * @param \Closure $handler
+     * @param Closure $handler
      *
      * @return self
      */
-    public function setRouter($id, \Closure $handler)
+    public function setRouter($id, Closure $handler)
     {
         $this->router[$id] = $handler->bindTo($this);
 
