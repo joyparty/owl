@@ -18,6 +18,11 @@ abstract class Adapter extends Service
     protected $savepoints = [];
     protected $in_transaction = false;
 
+    /**
+     * @param ?string $table
+     * @param ?string $column
+     * @return mixed
+     */
     abstract public function lastID($table = null, $column = null);
 
     /**
