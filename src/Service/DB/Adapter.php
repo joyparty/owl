@@ -9,6 +9,9 @@ use Owl\Service\Exception as ServiceException;
 use PDO;
 use PDOStatement;
 
+/**
+ * @mixin PDO
+ */
 abstract class Adapter extends Service
 {
     protected $handler;

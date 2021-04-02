@@ -3,7 +3,6 @@
 namespace Owl\Service\DB\Pgsql;
 
 use Owl\Service\DB\Adapter as BaseAdapter;
-use Owl\Service\Exception as ServiceException;
 
 if (!extension_loaded('pdo_pgsql')) {
     throw new \Exception('Require "pdo_pgsql" extension!');
@@ -18,8 +17,6 @@ class Adapter extends BaseAdapter
      * @param ?string $column
      *
      * @return mixed
-     *
-     * @throws ServiceException
      */
     public function lastID($table = null, $column = null)
     {
