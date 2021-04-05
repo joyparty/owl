@@ -3,7 +3,7 @@
 namespace Owl\Parameter;
 
 /**
- * @property mixed $parameter
+ * @property string $parameter
  */
 class Exception extends \Exception
 {
