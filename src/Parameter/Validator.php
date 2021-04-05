@@ -1,5 +1,8 @@
 <?php
+
 namespace Owl\Parameter;
+
+use Owl\Parameter\Exception as ParameterException;
 
 /**
  * 参数有效性检查，检查参数是否存在，值是否符合要求
@@ -140,7 +143,7 @@ class Validator
 
     private $path = [];
 
-    public function execute(array $values, array $rules)
+    public function execute(array $values, array $rules): bool
     {
         foreach ($rules as $key => $rule) {
             $rule = $this->normalizeRule($rule);
@@ -243,7 +246,7 @@ class Validator
         return true;
     }
 
-    protected function checkArray($key, $value, array $rule)
+    protected function checkArray($key, $value, array $rule): bool
     {
         if (!is_array($value)) {
             throw $this->exception($key, 'is not array type');
@@ -286,7 +289,7 @@ class Validator
         return true;
     }
 
-    protected function checkJson($key, $value, array $rule)
+    protected function checkJson($key, $value, array $rule): bool
     {
         try {
             $value = \Owl\safe_json_decode($value, true);
@@ -297,7 +300,7 @@ class Validator
         return $this->checkArray($key, $value, $rule);
     }
 
-    protected function checkObject($key, $value, array $rule)
+    protected function checkObject($key, $value, array $rule): bool
     {
         if (!is_object($value)) {
             throw $this->exception($key, 'is not object');
@@ -310,7 +313,7 @@ class Validator
         return true;
     }
 
-    protected function normalizeRule(array $rule)
+    protected function normalizeRule(array $rule): array
     {
         $rule['type'] = isset($rule['type']) ? strtolower($rule['type']) : 'string';
         switch ($rule['type']) {
@@ -348,12 +351,12 @@ class Validator
         return $rule;
     }
 
-    private function exception($key, $message)
+    private function exception(string $key, string $message): ParameterException
     {
         $this->path[] = $key;
         $message = 'Key [' . implode('=>', $this->path) . '], ' . $message;
 
-        $exception = new \Owl\Parameter\Exception($message);
+        $exception = new ParameterException($message);
         $exception->parameter = $key;
 
         return $exception;
