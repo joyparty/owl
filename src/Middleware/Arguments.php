@@ -1,4 +1,5 @@
 <?php
+
 namespace Owl\Middleware;
 
 /**
@@ -13,6 +14,9 @@ namespace Owl\Middleware;
  */
 class Arguments implements \ArrayAccess
 {
+    /**
+     * @var array
+     */
     private $arguments;
 
     public function __construct(/*$arguments1[, $arguments2[, ...]]*/)
