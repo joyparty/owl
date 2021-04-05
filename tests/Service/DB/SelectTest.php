@@ -13,28 +13,28 @@ class SelectTest extends TestCase
     public function testStandard()
     {
         $select = $this->select('mytable');
-        $this->assertEquals((string) $select, 'SELECT * FROM "mytable"');
+        $this->assertEquals('SELECT * FROM "mytable"', (string) $select);
 
         $select->orderBy(['id' => 'desc']);
-        $this->assertEquals((string) $select, 'SELECT * FROM "mytable" ORDER BY "id" DESC');
+        $this->assertEquals('SELECT * FROM "mytable" ORDER BY "id" DESC', (string) $select);
 
         $select->limit(10);
-        $this->assertEquals((string) $select, 'SELECT * FROM "mytable" ORDER BY "id" DESC LIMIT 10');
+        $this->assertEquals('SELECT * FROM "mytable" ORDER BY "id" DESC LIMIT 10', (string) $select);
 
         $select->offset(10);
-        $this->assertEquals((string) $select, 'SELECT * FROM "mytable" ORDER BY "id" DESC LIMIT 10 OFFSET 10');
+        $this->assertEquals('SELECT * FROM "mytable" ORDER BY "id" DESC LIMIT 10 OFFSET 10', (string) $select);
 
         $select->setColumns('id', 'email');
-        $this->assertEquals((string) $select, 'SELECT "id", "email" FROM "mytable" ORDER BY "id" DESC LIMIT 10 OFFSET 10');
+        $this->assertEquals('SELECT "id", "email" FROM "mytable" ORDER BY "id" DESC LIMIT 10 OFFSET 10', (string) $select);
 
         $select->setColumns(['id', 'email']);
-        $this->assertEquals((string) $select, 'SELECT "id", "email" FROM "mytable" ORDER BY "id" DESC LIMIT 10 OFFSET 10');
+        $this->assertEquals('SELECT "id", "email" FROM "mytable" ORDER BY "id" DESC LIMIT 10 OFFSET 10', (string) $select);
 
         $select->setColumns(new Expr('count(1)'));
-        $this->assertEquals((string) $select, 'SELECT count(1) FROM "mytable" ORDER BY "id" DESC LIMIT 10 OFFSET 10');
+        $this->assertEquals('SELECT count(1) FROM "mytable" ORDER BY "id" DESC LIMIT 10 OFFSET 10', (string) $select);
 
         $select->limit('a')->offset('b');
-        $this->assertEquals((string) $select, 'SELECT count(1) FROM "mytable" ORDER BY "id" DESC');
+        $this->assertEquals('SELECT count(1) FROM "mytable" ORDER BY "id" DESC', (string) $select);
     }
 
     public function testOrderBy()
@@ -42,16 +42,16 @@ class SelectTest extends TestCase
         $select = $this->select('mytable');
 
         $select->orderBy('foo');
-        $this->assertEquals((string) $select, 'SELECT * FROM "mytable" ORDER BY "foo"');
+        $this->assertEquals('SELECT * FROM "mytable" ORDER BY "foo"', (string) $select);
 
         $select->orderBy(new Expr('foo desc'));
-        $this->assertEquals((string) $select, 'SELECT * FROM "mytable" ORDER BY foo desc');
+        $this->assertEquals('SELECT * FROM "mytable" ORDER BY foo desc', (string) $select);
 
         $select->orderBy(['foo' => 'desc', 'bar' => 'asc']);
-        $this->assertEquals((string) $select, 'SELECT * FROM "mytable" ORDER BY "foo" DESC, "bar"');
+        $this->assertEquals('SELECT * FROM "mytable" ORDER BY "foo" DESC, "bar"', (string) $select);
 
         $select->orderBy('foo', 'bar', new Expr('baz desc'));
-        $this->assertEquals((string) $select, 'SELECT * FROM "mytable" ORDER BY "foo", "bar", baz desc');
+        $this->assertEquals('SELECT * FROM "mytable" ORDER BY "foo", "bar", baz desc', (string) $select);
     }
 
     public function testWhere()
@@ -61,50 +61,50 @@ class SelectTest extends TestCase
         $select->where('name = ?', 'yangyi');
         list($sql, $params) = $select->compile();
 
-        $this->assertEquals($sql, 'SELECT * FROM "mytable" WHERE (name = ?)');
-        $this->assertEquals($params, ['yangyi']);
+        $this->assertEquals('SELECT * FROM "mytable" WHERE (name = ?)', $sql);
+        $this->assertEquals(['yangyi'], $params);
 
         $select->where('email = ? and active = 1', 'yangyi.cn.gz@gmail.com');
         list($sql, $params) = $select->compile();
 
-        $this->assertEquals($sql, 'SELECT * FROM "mytable" WHERE (name = ?) AND (email = ? and active = 1)');
-        $this->assertEquals($params, ['yangyi', 'yangyi.cn.gz@gmail.com']);
+        $this->assertEquals('SELECT * FROM "mytable" WHERE (name = ?) AND (email = ? and active = 1)', $sql);
+        $this->assertEquals(['yangyi', 'yangyi.cn.gz@gmail.com'], $params);
 
         $other_select = $this->select('other_table')->setColumns('user_id')->where('other = ?', 'other');
         $select->whereIn('id', $other_select);
         list($sql, $params) = $select->compile();
 
-        $this->assertEquals($sql, 'SELECT * FROM "mytable" WHERE (name = ?) AND (email = ? and active = 1) AND ("id" IN (SELECT "user_id" FROM "other_table" WHERE (other = ?)))');
-        $this->assertEquals($params, ['yangyi', 'yangyi.cn.gz@gmail.com', 'other']);
+        $this->assertEquals('SELECT * FROM "mytable" WHERE (name = ?) AND (email = ? and active = 1) AND ("id" IN (SELECT "user_id" FROM "other_table" WHERE (other = ?)))', $sql);
+        $this->assertEquals(['yangyi', 'yangyi.cn.gz@gmail.com', 'other'], $params);
 
         //////////////////////////////
         $select = $this->select('mytable');
         $select->where('email = ? and passwd = ?', 'yangyi.cn.gz@gmail.com', 'abc');
         list($sql, $params) = $select->compile();
 
-        $this->assertEquals($sql, 'SELECT * FROM "mytable" WHERE (email = ? and passwd = ?)');
-        $this->assertEquals($params, ['yangyi.cn.gz@gmail.com', 'abc']);
+        $this->assertEquals('SELECT * FROM "mytable" WHERE (email = ? and passwd = ?)', $sql);
+        $this->assertEquals(['yangyi.cn.gz@gmail.com', 'abc'], $params);
 
         //////////////////////////////
         $select = $this->select('mytable');
         $select->where('email = ? and passwd = ?', ['yangyi.cn.gz@gmail.com', 'abc']);
         list($sql, $params) = $select->compile();
 
-        $this->assertEquals($sql, 'SELECT * FROM "mytable" WHERE (email = ? and passwd = ?)');
-        $this->assertEquals($params, ['yangyi.cn.gz@gmail.com', 'abc']);
+        $this->assertEquals('SELECT * FROM "mytable" WHERE (email = ? and passwd = ?)', $sql);
+        $this->assertEquals(['yangyi.cn.gz@gmail.com', 'abc'], $params);
 
         //////////////////////////////
         $select = $this->select('mytable');
         $select->whereIn('id', [1, 2, 3]);
         list($sql, $params) = $select->compile();
 
-        $this->assertEquals($sql, 'SELECT * FROM "mytable" WHERE ("id" IN (1,2,3))');
+        $this->assertEquals('SELECT * FROM "mytable" WHERE ("id" IN (1,2,3))', $sql);
 
         $select = $this->select('mytable');
         $select->whereIn('id', new Expr('select id from other'));
         list($sql, $params) = $select->compile();
 
-        $this->assertEquals($sql, 'SELECT * FROM "mytable" WHERE ("id" IN (select id from other))');
+        $this->assertEquals('SELECT * FROM "mytable" WHERE ("id" IN (select id from other))', $sql);
     }
 
     public function testUpdateWithoutWhere()
