@@ -2,16 +2,21 @@
 
 namespace Owl\Service\DB;
 
+use InvalidArgumentException;
+use Owl\Traits\Decorator;
+use PDO;
+use PDOStatement;
+
 /**
- * @mixin \PDOStatement
+ * @mixin PDOStatement
  */
 class Statement
 {
-    use \Owl\Traits\Decorator;
+    use Decorator;
 
     protected $statement;
 
-    public function __construct(\PDOStatement $statement)
+    public function __construct(PDOStatement $statement)
     {
         $this->statement = $this->reference = $statement;
     }
@@ -45,7 +50,7 @@ class Statement
      */
     public function getCol($col_number = 0)
     {
-        return $this->statement->fetch(\PDO::FETCH_COLUMN, $col_number);
+        return $this->statement->fetch(PDO::FETCH_COLUMN, $col_number);
     }
 
     /**
@@ -57,7 +62,7 @@ class Statement
      */
     public function getCols($col_number = 0)
     {
-        return $this->statement->fetchAll(\PDO::FETCH_COLUMN, $col_number);
+        return $this->statement->fetchAll(PDO::FETCH_COLUMN, $col_number);
     }
 
     /**
@@ -93,10 +98,10 @@ class Statement
             return $statement;
         }
 
-        if ($statement instanceof \PDOStatement) {
+        if ($statement instanceof PDOStatement) {
             return new static($statement);
         }
 
-        throw new \InvalidArgumentException('Invalid statement');
+        throw new InvalidArgumentException('Invalid statement');
     }
 }

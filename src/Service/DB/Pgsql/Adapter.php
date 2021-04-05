@@ -2,14 +2,22 @@
 
 namespace Owl\Service\DB\Pgsql;
 
+use Owl\Service\DB\Adapter as BaseAdapter;
+
 if (!extension_loaded('pdo_pgsql')) {
     throw new \Exception('Require "pdo_pgsql" extension!');
 }
 
-class Adapter extends \Owl\Service\DB\Adapter
+class Adapter extends BaseAdapter
 {
     protected $identifier_symbol = '"';
 
+    /**
+     * @param ?string $table
+     * @param ?string $column
+     *
+     * @return mixed
+     */
     public function lastID($table = null, $column = null)
     {
         $sql = ($table && $column)
@@ -71,7 +79,7 @@ class Adapter extends \Owl\Service\DB\Adapter
 
         $sequence = sprintf('%s_%s_seq', $table, $column);
         if ($schema) {
-            $sequence = $schema . '.' . $sequence;
+            $sequence = "{$schema}.{$sequence}";
         }
 
         return $this->quoteIdentifier($sequence);

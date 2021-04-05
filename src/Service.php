@@ -19,8 +19,6 @@ abstract class Service
             return $this->config;
         }
 
-        return isset($this->config[$key])
-             ? $this->config[$key]
-             : false;
+        return $this->config[$key] ?? false;
     }
 }

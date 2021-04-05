@@ -1,4 +1,5 @@
 <?php
+
 namespace Owl\Service\DB;
 
 abstract class Table

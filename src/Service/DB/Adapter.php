@@ -2,9 +2,17 @@
 
 namespace Owl\Service\DB;
 
+use Exception;
 use Owl\Logger;
+use Owl\Service;
+use Owl\Service\Exception as ServiceException;
+use PDO;
+use PDOStatement;
 
-abstract class Adapter extends \Owl\Service
+/**
+ * @mixin PDO
+ */
+abstract class Adapter extends Service
 {
     protected $handler;
 
@@ -13,6 +21,11 @@ abstract class Adapter extends \Owl\Service
     protected $savepoints = [];
     protected $in_transaction = false;
 
+    /**
+     * @param ?string $table
+     * @param ?string $column
+     * @return mixed
+     */
     abstract public function lastID($table = null, $column = null);
 
     /**
@@ -52,14 +65,14 @@ abstract class Adapter extends \Owl\Service
      */
     public function isConnected(): bool
     {
-        return $this->handler instanceof \PDO;
+        return $this->handler instanceof PDO;
     }
 
     /**
-     * @return \PDO
+     * @return PDO
      * @throws
      */
-    public function connect(): \PDO
+    public function connect(): PDO
     {
         if ($this->isConnected()) {
             return $this->handler;
@@ -70,19 +83,19 @@ abstract class Adapter extends \Owl\Service
         $password = $this->getConfig('password') ?: null;
         $options = $this->getConfig('options') ?: [];
 
-        $options[\PDO::ATTR_ERRMODE] = \PDO::ERRMODE_EXCEPTION;
+        $options[PDO::ATTR_ERRMODE] = PDO::ERRMODE_EXCEPTION;
 
         try {
-            $handler = new \PDO($dsn, $user, $password, $options);
+            $handler = new PDO($dsn, $user, $password, $options);
 
             Logger::log('debug', 'database connected', ['dsn' => $dsn]);
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             Logger::log('error', 'database connect failed', [
                 'error' => $exception->getMessage(),
                 'dsn' => $dsn,
             ]);
 
-            throw new \Owl\Service\Exception('Database connect failed!', 0, $exception);
+            throw new ServiceException('Database connect failed!', 0, $exception);
         }
 
         return $this->handler = $handler;
@@ -165,28 +178,35 @@ abstract class Adapter extends \Owl\Service
         return $this->in_transaction;
     }
 
-    public function execute($sql, $params = null)
+    /**
+     * @param string|Statement|PDOStatement $sql
+     * @param mixed $params
+     * @return Statement
+     * @throws ServiceException
+     */
+    public function execute($sql, $params = null): Statement
     {
-        $params = null === $params
-        ? []
-        : is_array($params) ? $params : array_slice(func_get_args(), 1);
+        $params = $params ?? [];
+        if (!is_array($params)) {
+            $params = array_slice(func_get_args(), 1);
+        }
 
         Logger::log('debug', 'database execute', [
-            'sql' => ($sql instanceof \PDOStatement) ? $sql->queryString : (string) $sql,
+            'sql' => ($sql instanceof PDOStatement) ? $sql->queryString : (string) $sql,
             'parameters' => $params,
         ]);
 
-        if ($sql instanceof \PDOStatement || $sql instanceof Statement) {
+        if ($sql instanceof PDOStatement || $sql instanceof Statement) {
             $sth = $sql;
             $sth->execute($params);
-        } elseif ($params) {
+        } else if ($params) {
             $sth = $this->connect()->prepare($sql);
             $sth->execute($params);
         } else {
             $sth = $this->connect()->query($sql);
         }
 
-        $sth->setFetchMode(\PDO::FETCH_ASSOC);
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
 
         return Statement::factory($sth);
     }
@@ -264,15 +284,22 @@ abstract class Adapter extends \Owl\Service
 
     /**
      * @param string $table_name
+     *
      * @return bool
      */
-    public function hasTable($table_name)
+    public function hasTable($table_name): bool
     {
         $table_name = str_replace($this->identifier_symbol, '', $table_name);
 
         return in_array($table_name, $this->getTables());
     }
 
+    /**
+     * @param string $table
+     * @param array $row
+     * @return int
+     * @throws ServiceException
+     */
     public function insert($table, array $row)
     {
         $params = [];
@@ -311,15 +338,23 @@ abstract class Adapter extends \Owl\Service
 
     public function delete($table, $where = null, $params = null): int
     {
-        $params = (null === $where || null === $params)
-        ? []
-        : (is_array($params) ? $params : array_slice(func_get_args(), 2));
+        if ($where === null || $params === null) {
+            $params = [];
+        }
+        if (!is_array($params)) {
+            $params = array_slice(func_get_args(), 2);
+        }
 
         $sth = $this->prepareDelete($table, $where);
 
         return $this->execute($sth, $params)->rowCount();
     }
 
+    /**
+     * @param string $table
+     * @param array $columns
+     * @return Statement
+     */
     public function prepareInsert($table, array $columns)
     {
         $values = array_values($columns);
@@ -347,6 +382,12 @@ abstract class Adapter extends \Owl\Service
         return $this->prepare($sql);
     }
 
+    /**
+     * @param string $table
+     * @param array $columns
+     * @param ?string $where
+     * @return Statement
+     */
     public function prepareUpdate($table, array $columns, $where = null)
     {
         $only_column = (array_values($columns) === $columns);
@@ -369,6 +410,11 @@ abstract class Adapter extends \Owl\Service
         return $this->prepare($sql);
     }
 
+    /**
+     * @param string $table
+     * @param ?string $where
+     * @return Statement
+     */
     public function prepareDelete($table, $where = null)
     {
         $table = $this->quoteIdentifier($table);

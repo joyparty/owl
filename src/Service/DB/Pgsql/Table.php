@@ -2,7 +2,9 @@
 
 namespace Owl\Service\DB\Pgsql;
 
-class Table extends \Owl\Service\DB\Table
+use Owl\Service\DB\Table as BaseTable;
+
+class Table extends BaseTable
 {
     protected function listColumns(): array
     {

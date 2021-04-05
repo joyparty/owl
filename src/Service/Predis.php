@@ -3,6 +3,8 @@
 namespace Owl\Service;
 
 use Owl\Logger;
+use Owl\Service;
+use Predis\Client;
 
 // https://github.com/nrk/predis
 if (!class_exists('\Predis\Client')) {
@@ -10,7 +12,7 @@ if (!class_exists('\Predis\Client')) {
 }
 
 /**
- * @mixin \Predis\Client
+ * @mixin Client
  *
  * @example
  * $parameters = [
@@ -28,7 +30,7 @@ if (!class_exists('\Predis\Client')) {
  *
  * $redis = new \Owl\Service\Predis($parameters, $options);
  */
-class Predis extends \Owl\Service
+class Predis extends Service
 {
     protected $client;
 
@@ -54,6 +56,9 @@ class Predis extends \Owl\Service
         return $args ? call_user_func_array([$client, $method], $args) : $client->$method();
     }
 
+    /**
+     * @return Client|null
+     */
     public function connect()
     {
         if (!$this->client || !$this->client->isConnected()) {
@@ -61,7 +66,7 @@ class Predis extends \Owl\Service
             $options = $this->getConfig('options') ?: [];
 
             try {
-                $this->client = new \Predis\Client($parameters, $options);
+                $this->client = new Client($parameters, $options);
 
                 Logger::log('debug', 'redis connected', [
                     'parameters' => $parameters,

@@ -134,7 +134,7 @@ class Select
      * @param string $where
      * @param ?mixed[] $params
      *
-     * @return $this
+     * @return self
      *
      * @example
      * $select->where('foo = ?', 1)->where('bar = ?', 2);
@@ -142,9 +142,10 @@ class Select
      */
     public function where($where, $params = null): self
     {
-        $params = $params === null
-                ? []
-                : (is_array($params) ? $params : array_slice(func_get_args(), 1));
+        $params = $params ?? [];
+        if (!is_array($params)) {
+            $params = array_slice(func_get_args(), 1);
+        }
 
         $this->where[] = [$where, $params];
 
@@ -157,7 +158,7 @@ class Select
      * @param string       $column
      * @param array|Select $relation
      *
-     * @return $this
+     * @return self
      *
      * @example
      * // select * from foobar where foo in (1, 2, 3)
@@ -205,9 +206,12 @@ class Select
      */
     public function groupBy($columns, $having = null, $having_params = null): self
     {
-        $having_params = ($having === null || $having_params === null)
-                       ? []
-                       : is_array($having_params) ? $having_params : array_slice(func_get_args(), 2);
+        if ($having === null || $having_params === null) {
+            $having_params = [];
+        }
+        if (!is_array($having_params)) {
+            $having_params = array_slice(func_get_args(), 2);
+        }
 
         $this->group_by = [$columns, $having, $having_params];
 
@@ -230,7 +234,9 @@ class Select
      */
     public function orderBy($expressions): self
     {
-        $expressions = is_array($expressions) ? $expressions : func_get_args();
+        if (!is_array($expressions)) {
+            $expressions = func_get_args();
+        }
 
         $order_by = [];
         foreach ($expressions as $key => $expression) {
@@ -248,7 +254,7 @@ class Select
                 $column = $this->adapter->quoteIdentifier($column);
                 $sort = (strtoupper($sort) === 'DESC') ? 'DESC' : '';
 
-                $order_by[] = $sort ? $column . ' ' . $sort : $column;
+                $order_by[] = $sort ? "{$column} {$sort}" : $column;
             }
         }
 
@@ -311,20 +317,22 @@ class Select
         $sql = 'SELECT ';
         $params = [];
 
-        $sql .= $this->columns
-              ? implode(', ', $adapter->quoteIdentifier($this->columns))
-              : '*';
+        if ($this->columns) {
+            $sql .= implode(', ', $adapter->quoteIdentifier($this->columns));
+        } else {
+            $sql .= '*';
+        }
 
         list($table, $table_params) = $this->compileFrom();
         if ($table_params) {
             $params = array_merge($params, $table_params);
         }
 
-        $sql .= ' FROM ' . $table;
+        $sql .= " FROM {$table}";
 
         list($where, $where_params) = $this->compileWhere();
         if ($where) {
-            $sql .= ' WHERE ' . $where;
+            $sql .= " WHERE {$where}";
         }
 
         if ($where_params) {
@@ -333,7 +341,7 @@ class Select
 
         list($group_by, $group_params) = $this->compileGroupBy();
         if ($group_by) {
-            $sql .= ' ' . $group_by;
+            $sql .= " {$group_by}";
         }
 
         if ($group_params) {
@@ -341,15 +349,16 @@ class Select
         }
 
         if ($this->order_by) {
-            $sql .= ' ORDER BY ' . implode(', ', $this->order_by);
+            $obs = implode(', ', $this->order_by);
+            $sql .= " ORDER BY {$obs}";
         }
 
         if ($this->limit) {
-            $sql .= ' LIMIT ' . $this->limit;
+            $sql .= " LIMIT {$this->limit}";
         }
 
         if ($this->offset) {
-            $sql .= ' OFFSET ' . $this->offset;
+            $sql .= " OFFSET {$this->offset}";
         }
 
         return [$sql, $params];
@@ -573,7 +582,7 @@ class Select
         }
 
         // 见delete()方法注释
-        if ($this->limit or $this->offset or $this->group_by) {
+        if ($this->limit || $this->offset || $this->group_by) {
             throw new \LogicException('CAN NOT UPDATE while specify LIMIT or OFFSET or GROUP BY');
         }
 
@@ -698,8 +707,8 @@ class Select
      * 把查询条件参数编译为where子句.
      *
      * @return array [
-     *     0 => <string>,    // where 子句
-     *     1 => <array>,     // 查询参数
+     *     0: <string>,     // where 子句
+     *     1: <array>,      // 查询参数
      * ]
      */
     protected function compileWhere(): array
@@ -727,8 +736,8 @@ class Select
      * 编译group by 子句.
      *
      * @return array [
-     *     0 => <string>,    // group by 子句
-     *     1 => <array>,     // 查询参数
+     *     0: <string>,     // group by 子句
+     *     1: <array>,      // 查询参数
      * ]
      */
     protected function compileGroupBy(): array

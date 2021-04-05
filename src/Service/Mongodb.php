@@ -2,15 +2,22 @@
 
 namespace Owl\Service;
 
+use MongoClient;
+use MongoCollection;
+use Owl\Service;
+
 if (!extension_loaded('mongo')) {
     throw new \Exception('Require "mongo" extension');
 }
 
 /**
- * @mixin \MongoClient
+ * @mixin MongoClient
  */
-class Mongodb extends \Owl\Service
+class Mongodb extends Service
 {
+    /**
+     * @var MongoClient
+     */
     private $client;
 
     public function __construct(array $config = [])
@@ -34,10 +41,10 @@ class Mongodb extends \Owl\Service
         return true;
     }
 
-    public function connect(): \MongoClient
+    public function connect(): MongoClient
     {
         if (!$this->client) {
-            $this->client = new \MongoClient($this->getConfig('dsn'), $this->getConfig('options') ?: []);
+            $this->client = new MongoClient($this->getConfig('dsn'), $this->getConfig('options') ?: []);
         } else if (!$this->client->connected) {
             $this->client->connect();
         }
@@ -51,10 +58,10 @@ class Mongodb extends \Owl\Service
     }
 
     /**
-     * @param string|array|\MongoCollection $db
+     * @param string|array|MongoCollection $db
      * @param ?string $collection
      *
-     * @return \MongoCollection
+     * @return MongoCollection
      * @throws
      *
      * @example
@@ -62,9 +69,9 @@ class Mongodb extends \Owl\Service
      * $collection = $mongo->getCollection('db.collection');
      * $collection = $mongo->getCollection(['db', 'collection']);
      */
-    public function getCollection($db, $collection = null): \MongoCollection
+    public function getCollection($db, $collection = null): MongoCollection
     {
-        if ($db instanceof \MongoCollection) {
+        if ($db instanceof MongoCollection) {
             return $db;
         }
 
