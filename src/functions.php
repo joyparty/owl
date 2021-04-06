@@ -1,16 +1,19 @@
 <?php
+
 namespace Owl;
 
 /**
- * @param string $string
+ * @param mixed $string
  *
  * @return bool
  */
-function str_has_tags($string)
+function str_has_tags($string): bool
 {
-    return is_string($string)
-    && strlen($string) > 2
-    && $string !== strip_tags($string);
+    if (is_string($string) && strlen($string) > 2) {
+        return $string !== strip_tags($string);
+    }
+
+    return false;
 }
 
 function array_set_in(array &$target, array $path, $value, $push = false)
@@ -43,15 +46,19 @@ function array_set_in(array &$target, array $path, $value, $push = false)
 }
 
 /**
- * // set in
- * $target[$path] = $value;.
+ * difference between 'set in' and 'push in':
+ *  set in:
+ *      $target[$path] = $value;.
+ *  push in:
+ *      $target[$path][] = $value;
  *
- * // push in
- * $target[$path][] = $value;
+ * @param array $target
+ * @param array $path
+ * @param mixed $value
  */
 function array_push_in(array &$target, array $path, $value)
 {
-    return array_set_in($target, $path, $value, true);
+    array_set_in($target, $path, $value, true);
 }
 
 function array_get_in(array $target, array $path)
@@ -88,27 +95,31 @@ function array_unset_in(array &$target, array $path)
 
 /**
  * @example
- * $value = [
- *     'a' => [
- *         'b' => [],
- *     ],
- *     'c' => [
- *         'd' => [
- *             'e' => 1,
- *         ],
- *     ],
- * ];
+ *  $value = [
+ *      'a' => [
+ *          'b' => [],
+ *      ],
+ *      'c' => [
+ *          'd' => [
+ *              'e' => 1,
+ *          ],
+ *      ],
+ *  ];
+ *  $result = \Owl\array_trim($value);
+ *  // the following expression is true
+ *  $result == [
+ *      'c' => [
+ *          'd' => [
+ *              'e' => 1,
+ *          ],
+ *      ],
+ *  ]);
  *
- * // [
- * //     'c' => [
- * //         'd' => [
- * //             'e' => 1,
- * //         ],
- * //     ],
- * // ];
- * $value = \Owl\array_trim($value);
+ * @param array $target
+ *
+ * @return array
  */
-function array_trim(array $target)
+function array_trim(array $target): array
 {
     $keys = array_keys($target);
     $is_array = ($keys === array_keys($keys));
