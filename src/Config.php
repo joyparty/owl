@@ -31,9 +31,10 @@ class Config
 
     public static function get($keys = null)
     {
-        $keys = $keys === null
-              ? []
-              : is_array($keys) ? $keys : func_get_args();
+        $keys = $keys ?? [];
+        if (!is_array($keys)) {
+            $keys = func_get_args();
+        }
 
         try {
             return \Owl\array_get_in(self::$config, $keys);
