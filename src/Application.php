@@ -1,5 +1,10 @@
 <?php
+
 namespace Owl;
+
+use Owl\Http\Exception as HttpException;
+use Owl\Http\Request;
+use Owl\Http\Response;
 
 /**
  * @example
@@ -40,12 +45,19 @@ namespace Owl;
  */
 class Application
 {
+    /**
+     * @var callable $exception_handler
+     */
     protected $exception_handler;
+
+    /**
+     * @var Middleware
+     */
     protected $middleware;
 
     public function __construct()
     {
-        $this->middleware = new \Owl\Middleware();
+        $this->middleware = new Middleware();
     }
 
     /**
@@ -54,6 +66,7 @@ class Application
      * @param callable $handler
      *
      * @return $this
+     * @throws
      */
     public function middleware($handler)
     {
@@ -73,7 +86,7 @@ class Application
     /**
      * 添加异常处理逻辑.
      *
-     * @param \Closure $handler
+     * @param callable $handler
      *
      * @return $this
      */
@@ -86,32 +99,30 @@ class Application
 
     public function start()
     {
-        $request = new \Owl\Http\Request();
-        $response = new \Owl\Http\Response();
+        $request = new Request();
+        $response = new Response();
 
-        return $this->execute($request, $response);
+        $this->execute($request, $response);
     }
 
     /**
      * 响应请求，依次执行添加的中间件逻辑.
      *
-     * @param \Owl\Http\Request  $request
-     * @param \Owl\Http\Response $response
+     * @param Request  $request
+     * @param Response $response
      */
-    public function execute(\Owl\Http\Request $request, \Owl\Http\Response $response)
+    public function execute(Request $request, Response $response)
     {
         $exception_handler = $this->getExceptionHandler();
         $method = $request->getMethod();
         try {
             if (!in_array($method, ['HEAD', 'OPTIONS', 'GET', 'POST', 'PUT', 'DELETE', 'PATCH'])) {
-                throw \Owl\Http\Exception::factory(501);
+                throw HttpException::factory(501);
             }
 
             $this->middleware->execute([$request, $response]);
-        } catch (\Exception $exception) {
+        } catch (\Throwable $exception) {
             call_user_func($exception_handler, $exception, $request, $response);
-        } catch (\Throwable $error) {
-            call_user_func($exception_handler, $error, $request, $response);
         }
 
         if (!TEST) {
@@ -130,9 +141,7 @@ class Application
         }
 
         return function ($exception, $request, $response) {
-            $code = $exception instanceof \Owl\Http\Exception
-            ? $exception->getCode()
-            : 500;
+            $code = $exception instanceof HttpException ? $exception->getCode() : 500;
 
             $response->withStatus($code)
                      ->withBody(new \Owl\Http\StringStream('')); // reset response body
