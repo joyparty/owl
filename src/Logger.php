@@ -1,4 +1,5 @@
 <?php
+
 namespace Owl;
 
 use Psr\Log\LoggerInterface;
@@ -17,6 +18,9 @@ class Logger
         self::$logger = null;
     }
 
+    /**
+     * @return LoggerInterface|null
+     */
     public static function getLogger()
     {
         return self::$logger;
@@ -36,7 +40,7 @@ class Logger
         }
 
         if ($previous = $exception->getPrevious()) {
-            return self::logException($previous, $context);
+            self::logException($previous, $context);
         }
 
         $message = sprintf('%s(%d): %s', get_class($exception), $exception->getCode(), $exception->getMessage());
