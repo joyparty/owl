@@ -1,23 +1,31 @@
 <?php
-namespace tests;
 
-class ApplicationTest extends \PHPUnit_Framework_TestCase
+declare(strict_types=1);
+
+namespace Tests\MVC;
+
+use Owl\Application;
+use Owl\Http\Request;
+use Owl\Http\Response;
+use Owl\Http\Exception as HttpException;
+use PHPUnit\Framework\TestCase;
+
+class ApplicationTest extends TestCase
 {
-    /**
-     * @expectedException \Owl\Http\Exception
-     * @expectedExceptionCode 501
-     */
     public function test501()
     {
-        $app = new \Owl\Application();
+        $this->expectException(HttpException::class);
+        $this->expectExceptionCode(501);
+
+        $app = new Application();
         $app->setExceptionHandler(function ($exception) {
             throw $exception;
         });
 
-        $request = \Owl\Http\Request::factory([
+        $request = Request::factory([
             'method' => 'FOO',
         ]);
-        $response = new \Owl\Http\Response();
+        $response = new Response();
 
         $app->execute($request, $response);
     }

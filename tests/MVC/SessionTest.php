@@ -1,23 +1,28 @@
 <?php
 
-namespace Tests;
+declare(strict_types=1);
 
-class SessionTest extends \PHPUnit_Framework_TestCase
+namespace Tests\MVC;
+
+use Owl\Session;
+use PHPUnit\Framework\TestCase;
+
+class SessionTest extends TestCase
 {
     protected function setUp()
     {
-        \Owl\Session::initialize();
+        Session::initialize();
     }
 
     protected function tearDown()
     {
-        \Owl\Session::getInstance()->destroy();
+        Session::getInstance()->destroy();
         unset($_SESSION);
     }
 
     public function testInitialize()
     {
-        $this->assertInstanceof('\Owl\Session', $_SESSION);
+        $this->assertInstanceof(Session::class, $_SESSION);
     }
 
     public function testIndirectModification()
@@ -25,8 +30,8 @@ class SessionTest extends \PHPUnit_Framework_TestCase
         $_SESSION['a']['b']['c'] = 1;
         $_SESSION['a']['b']['d'] = 2;
 
-        $this->assertEquals($_SESSION['a']['b']['c'], 1);
-        $this->assertEquals($_SESSION['a']['b']['d'], 2);
+        $this->assertEquals(1, $_SESSION['a']['b']['c']);
+        $this->assertEquals(2, $_SESSION['a']['b']['d']);
     }
 
     public function testSet()

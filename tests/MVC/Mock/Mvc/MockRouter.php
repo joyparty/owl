@@ -1,22 +1,28 @@
 <?php
 
-namespace Tests\Mock\Mvc;
+declare(strict_types=1);
 
-class Router extends \Owl\Mvc\Router
+namespace Tests\MVC\Mock\Mvc;
+
+use Owl\Http\Request;
+use Owl\Http\Response;
+use Owl\Mvc\Router;
+
+class MockRouter extends Router
 {
     public function testExecute($path, $method = 'GET')
     {
-        $request = \Owl\Http\Request::factory([
+        $request = Request::factory([
             'uri' => $path,
             'method' => $method,
         ]);
 
-        return $this->execute($request, new \Owl\Http\Response());
+        return $this->execute($request, new Response());
     }
 
     public function testDispatch($path)
     {
-        $request = \Owl\Http\Request::factory([
+        $request = Request::factory([
             'uri' => $path,
             'method' => 'GET',
         ]);

@@ -1,12 +1,18 @@
 <?php
 
-namespace tests\Mvc;
+declare(strict_types=1);
 
-class RouterTest extends \PHPUnit_Framework_TestCase
+namespace tests\MVC\Mvc;
+
+use Owl\Http\Exception as HttpException;
+use Tests\MVC\Mock\Mvc\MockRouter;
+use PHPUnit\Framework\TestCase;
+
+class RouterTest extends TestCase
 {
     public function testDispatchByPath()
     {
-        $router = new \Tests\Mock\Mvc\Router([
+        $router = new MockRouter([
             'namespace' => '\Controller',
         ]);
 
@@ -21,7 +27,7 @@ class RouterTest extends \PHPUnit_Framework_TestCase
 
     public function testDisaptchByRewrite()
     {
-        $router = new \Tests\Mock\Mvc\Router([
+        $router = new MockRouter([
             'namespace' => '\Controller',
             'rewrite' => [
                 '#^/user/(\d+)$#' => '\Controller\User',
@@ -36,7 +42,7 @@ class RouterTest extends \PHPUnit_Framework_TestCase
 
     public function testDispatchBasePath()
     {
-        $router = new \Tests\Mock\Mvc\Router([
+        $router = new MockRouter([
             'base_path' => '/foobar',
             'namespace' => '\Controller',
             'rewrite' => [
@@ -48,18 +54,18 @@ class RouterTest extends \PHPUnit_Framework_TestCase
         $this->assertSame(['\Controller\Foo\Bar', []], $router->testDispatch('/foobar/foo/bar'));
         $this->assertSame(['\Controller\Baz', []], $router->testDispatch('/foobar/baz'));
 
-        $this->setExpectedException('\Owl\Http\Exception', '', 404);
+        $this->expectException(HttpException::class);
         $router->testDispatch('/baz');
     }
 
     public function testDelegate()
     {
-        $router = new \Tests\Mock\Mvc\Router([
+        $router = new MockRouter([
             'base_path' => '/foo/bar',
             'namespace' => '\Controller',
         ]);
 
-        $admin_router = new \Tests\Mock\Mvc\Router([
+        $admin_router = new MockRouter([
             'namespace' => '\Admin\Controller',
             'rewrite' => [
                 '#^/baz#' => '\Admin\Controller\Baz',
@@ -83,7 +89,7 @@ class RouterTest extends \PHPUnit_Framework_TestCase
 
     public function testMiddleware()
     {
-        $router = new \Tests\Mock\Mvc\Router([
+        $router = new MockRouter([
             'namespace' => '\Controller',
         ]);
 
@@ -107,7 +113,7 @@ class RouterTest extends \PHPUnit_Framework_TestCase
 
     public function testExceptionHandler()
     {
-        $router = new \Tests\Mock\Mvc\Router([
+        $router = new MockRouter([
             'namespace' => '\Controller',
         ]);
 
@@ -115,7 +121,7 @@ class RouterTest extends \PHPUnit_Framework_TestCase
             $response->write('page not found');
         });
 
-        $admin_router = new \Tests\Mock\Mvc\Router([
+        $admin_router = new MockRouter([
             'namespace' => '\Admin\Controller',
         ]);
         $router->delegate('/admin', $admin_router);

@@ -1,11 +1,17 @@
 <?php
-namespace Tests;
 
-class ViewTest extends \PHPUnit_Framework_TestCase
+declare(strict_types=1);
+
+namespace Tests\MVC\Mvc;
+
+use Owl\Mvc\View;
+use PHPUnit\Framework\TestCase;
+
+class ViewTest extends TestCase
 {
     public function test()
     {
-        $view = new \Owl\Mvc\View(TEST_DIR . '/fixture/view');
+        $view = new View(TEST_DIR . '/fixture/view');
 
         $output = $view->render('page');
         $output = trim($output, "\n");

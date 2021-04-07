@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Tests\MVC\Context;
 
+use Owl\Context\Cookie;
 use Owl\Http\Request;
 use Owl\Http\Response;
-use Owl\Context\Cookie;
 use PHPUnit\Framework\TestCase;
-use Tests\Mock\Cookie as MockCookie;
-use Tests\Mock\Http\Response as MockResponse;
+use Tests\MVC\Mock\Cookie as MockCookie;
+use Tests\MVC\Mock\Http\Response as MockResponse;
 
 class CookieTest extends TestCase
 {

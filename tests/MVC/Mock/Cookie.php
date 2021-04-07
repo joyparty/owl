@@ -1,6 +1,10 @@
 <?php
 
-namespace Tests\Mock;
+declare(strict_types=1);
+
+namespace Tests\MVC\Mock;
+
+use Owl\Http\Response;
 
 class Cookie
 {
@@ -51,7 +55,7 @@ class Cookie
         $this->data = [];
     }
 
-    public function apply(\Owl\Http\Response $response)
+    public function apply(Response $response)
     {
         foreach ($response->getCookies() as $cookie) {
             call_user_func_array([$this, 'set'], $cookie);

@@ -1,10 +1,14 @@
 <?php
 
-namespace Tests\Mock\Context;
+declare(strict_types=1);
 
-class Redis extends \Owl\Context\Redis
+namespace Tests\MVC\Mock\Context;
+
+use Owl\Context\Redis as ContextRedis;
+
+class Redis extends ContextRedis
 {
-    public function isDirty()
+    public function isDirty(): bool
     {
         return $this->dirty;
     }
