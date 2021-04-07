@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\MVC\Context;
 
 use Owl\Http\Request;
@@ -46,7 +48,7 @@ class CookieTest extends TestCase
                 'response' => new MockResponse(),
             ]));
 
-            $this->assertEquals($handler->get('test'), 'abc 中文', $msg);
+            $this->assertEquals('abc 中文', $handler->get('test'), $msg);
         }
     }
 
@@ -85,7 +87,7 @@ class CookieTest extends TestCase
                     'response' => new MockResponse(),
                 ]));
 
-                $this->assertEquals($handler->get('test'), 'abc 中文', "MCRYPT, cipher: {$cipher} mode: {$mode} 加密解密失败");
+                $this->assertEquals('abc 中文', $handler->get('test'), "MCRYPT, cipher: {$cipher} mode: {$mode} 加密解密失败");
             }
         }
     }
@@ -128,7 +130,7 @@ class CookieTest extends TestCase
                 'response' => new MockResponse(),
             ]));
 
-            $this->assertEquals($handler->get('test'), 'abc 中文', "OPENSSL, method: {$method} 加密解密失败");
+            $this->assertEquals('abc 中文', $handler->get('test'), "OPENSSL, method: {$method} 加密解密失败");
         }
     }
 
@@ -214,7 +216,7 @@ class CookieTest extends TestCase
             'response' => new MockResponse(),
         ]));
 
-        $this->assertEquals($handler->get('test'), 'abc', '同子网IP取值');
+        $this->assertEquals('abc', $handler->get('test'), '同子网IP取值');
 
         $handler = new Cookie(array_merge($config, [
             'request' => Request::factory(['cookies' => $handler->getConfig('response')->getCookies(), 'ip' => '192.168.2.1']),
