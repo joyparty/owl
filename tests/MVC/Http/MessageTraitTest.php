@@ -1,8 +1,13 @@
 <?php
 
-namespace Tests\Http;
+declare(strict_types=1);
 
-class MessageTraitTest extends \PHPUnit_Framework_TestCase
+namespace Tests\MVC\Http;
+
+use Owl\Http\MessageTrait;
+use PHPUnit\Framework\TestCase;
+
+class MessageTraitTest extends TestCase
 {
     public function testImmutability()
     {
@@ -47,7 +52,7 @@ class MessageTraitTest extends \PHPUnit_Framework_TestCase
 
 class Message
 {
-    use \Owl\Http\MessageTrait;
+    use MessageTrait;
 
     public function setImmutability($value)
     {
