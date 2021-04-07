@@ -2,6 +2,8 @@
 
 namespace Owl;
 
+use Psr\Log\LoggerInterface;
+
 abstract class Crontab
 {
     use \Owl\Traits\Context;
@@ -154,12 +156,12 @@ abstract class Crontab
         }
     }
 
-    protected function getName()
+    protected function getName(): string
     {
-        return $this->name ?: get_class($this);
+        return strval($this->name ?: get_class($this));
     }
 
-    public static function setLogger(\Psr\Log\LoggerInterface $logger)
+    public static function setLogger(LoggerInterface $logger)
     {
         self::$logger = $logger;
     }
