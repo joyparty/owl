@@ -3,8 +3,10 @@
 namespace Owl\Service;
 
 use Closure;
+use InvalidArgumentException;
 use Owl\Container as BaseContainer;
 use Owl\Traits\Singleton;
+use UnexpectedValueException;
 
 /**
  * @example
@@ -46,7 +48,7 @@ class Container extends BaseContainer
 
     protected $router = [];
 
-    public function setServices(array $services)
+    public function setServices(array $services): self
     {
         foreach ($services as $id => $options) {
             $this->setService($id, $options);
@@ -61,7 +63,7 @@ class Container extends BaseContainer
      *
      * @return self
      */
-    public function setRouter($id, Closure $handler)
+    public function setRouter($id, Closure $handler): self
     {
         $this->router[$id] = $handler->bindTo($this);
 
@@ -81,7 +83,7 @@ class Container extends BaseContainer
         }
 
         if (!isset($this->router[$id])) {
-            throw new \Exception('Undefined service or service router: "' . $id . '"');
+            throw new \Exception("Undefined service or service router: \"{$id}\"");
         }
 
         $args = array_slice(func_get_args(), 1);
@@ -113,12 +115,12 @@ class Container extends BaseContainer
     {
         $this->set($id, function () use ($options) {
             if (!isset($options['class'])) {
-                throw new \InvalidArgumentException('Require service class name');
+                throw new InvalidArgumentException('Require service class name');
             }
 
             $class = $options['class'];
             if (!is_subclass_of($class, '\Owl\Service')) {
-                throw new \UnexpectedValueException('Require subclass of "\Owl\Service"');
+                throw new UnexpectedValueException('Require subclass of "\Owl\Service"');
             }
 
             unset($options['class']);
