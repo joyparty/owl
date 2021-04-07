@@ -2,7 +2,9 @@
 
 namespace Owl\Traits;
 
-// 单例模式
+/**
+ * 实现单例模式
+ */
 trait Singleton
 {
     protected static $__instances__ = [];
@@ -16,6 +18,9 @@ trait Singleton
         throw new \Exception('Cloning ' . __CLASS__ . ' is not allowed');
     }
 
+    /**
+     * @return static
+     */
     public static function getInstance()
     {
         $class = get_called_class();
