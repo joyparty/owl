@@ -11,7 +11,7 @@ class ViewTest extends TestCase
 {
     public function test()
     {
-        $view = new View(TEST_DIR . '/fixture/view');
+        $view = new View(TEST_DIR . '/MVC/fixture/view');
 
         $output = $view->render('page');
         $output = trim($output, "\n");
