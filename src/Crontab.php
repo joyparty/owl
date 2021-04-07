@@ -18,6 +18,9 @@ abstract class Crontab
 
     abstract protected function execute();
 
+    /**
+     * @var LoggerInterface|null
+     */
     private static $logger;
 
     /**
