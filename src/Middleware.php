@@ -1,4 +1,5 @@
 <?php
+
 namespace Owl;
 
 use Owl\Middleware\Arguments;
@@ -51,7 +52,7 @@ class Middleware
      *
      * @return $this
      */
-    public function insert($handler)
+    public function insert($handler): self
     {
         if (!is_callable($handler)) {
             throw new \Exception('Middleware handler is not callable.');
@@ -65,6 +66,11 @@ class Middleware
     /**
      * 执行队列里的所有中间件
      * 调用此方法传递的任意参数都会被传递给每个中间件.
+     *
+     * @param array $arguments
+     * @param array $handlers
+     *
+     * @return mixed
      */
     public function execute(array $arguments = [], array $handlers = [])
     {
