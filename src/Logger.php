@@ -3,6 +3,7 @@
 namespace Owl;
 
 use Psr\Log\LoggerInterface;
+use Throwable;
 
 class Logger
 {
@@ -33,20 +34,21 @@ class Logger
         }
     }
 
-    public static function logException($exception, array $context)
+    public static function logException(Throwable $exception, array $context)
     {
         if (!$logger = self::$logger) {
             return;
         }
 
-        if ($previous = $exception->getPrevious()) {
-            self::logException($previous, $context);
+        $e = $exception;
+        while ($prev = $exception->getPrevious()) {
+            $e = $prev;
         }
 
-        $message = sprintf('%s(%d): %s', get_class($exception), $exception->getCode(), $exception->getMessage());
+        $message = sprintf('%s(%d): %s', get_class($e), $e->getCode(), $e->getMessage());
         $logger->error($message, $context);
 
-        $traces = explode("\n", $exception->getTraceAsString());
+        $traces = explode("\n", $e->getTraceAsString());
         foreach ($traces as $trace) {
             $logger->error($trace);
         }
