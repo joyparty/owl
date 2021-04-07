@@ -1,12 +1,17 @@
 <?php
 
-namespace Tests\Http;
+declare(strict_types=1);
 
-class ResponseTest extends \PHPUnit_Framework_TestCase
+namespace Tests\MVC\Http;
+
+use Owl\Http\Response;
+use PHPUnit\Framework\TestCase;
+
+class ResponseTest extends TestCase
 {
     public function test()
     {
-        $response = new \Owl\Http\Response();
+        $response = new Response();
 
         // status
         $this->assertSame(200, $response->getStatusCode());
