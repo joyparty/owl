@@ -2,6 +2,7 @@
 
 namespace Owl;
 
+use Exception;
 use Owl\Middleware\Arguments;
 
 /**
@@ -51,11 +52,12 @@ class Middleware
      * @param callable $handler
      *
      * @return $this
+     * @throws Exception
      */
     public function insert($handler): self
     {
         if (!is_callable($handler)) {
-            throw new \Exception('Middleware handler is not callable.');
+            throw new Exception('Middleware handler is not callable.');
         }
 
         $this->handlers[] = $handler;
@@ -77,7 +79,7 @@ class Middleware
         $handlers = $handlers ?: $this->handlers;
 
         if (!$handlers) {
-            return;
+            return null;
         }
 
         $stack = [];
