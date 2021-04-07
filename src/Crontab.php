@@ -3,6 +3,7 @@
 namespace Owl;
 
 use Psr\Log\LoggerInterface;
+use Throwable;
 
 abstract class Crontab
 {
@@ -45,7 +46,7 @@ abstract class Crontab
         // 执行任务逻辑
         try {
             $this->execute();
-        } catch (\Exception $ex) {
+        } catch (Throwable $ex) {
             $this->log('error', 'Job execute error', [
                 'error' => $ex->getMessage(),
             ]);
@@ -82,7 +83,7 @@ abstract class Crontab
             if (!$this->testTimer()) {
                 return false;
             }
-        } catch (\Exception $ex) {
+        } catch (Throwable $ex) {
             $this->log('error', 'Job testTimer() error', [
                 'error' => $ex->getMessage(),
             ]);
