@@ -16,7 +16,7 @@ class SessionTest extends TestCase
 
     protected function tearDown()
     {
-        Session::getInstance()->destroy();
+        @Session::getInstance()->destroy();
         unset($_SESSION);
     }
 
