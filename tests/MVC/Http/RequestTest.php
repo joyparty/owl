@@ -1,11 +1,17 @@
 <?php
-namespace Tests\Http;
 
-class RequestTest extends \PHPUnit_Framework_TestCase
+declare(strict_types=1);
+
+namespace Tests\MVC\Http;
+
+use Owl\Http\Request;
+use PHPUnit\Framework\TestCase;
+
+class RequestTest extends TestCase
 {
     public function testGet()
     {
-        $request = \Owl\Http\Request::factory([
+        $request = Request::factory([
             'uri' => '/foobar?a=b',
             'get' => [
                 'foo' => '1',
@@ -23,7 +29,7 @@ class RequestTest extends \PHPUnit_Framework_TestCase
 
     public function testPost()
     {
-        $request = \Owl\Http\Request::factory([
+        $request = Request::factory([
             'method' => 'post',
             'post' => [
                 'foo' => '1',
@@ -40,7 +46,7 @@ class RequestTest extends \PHPUnit_Framework_TestCase
 
     public function testCookie()
     {
-        $request = \Owl\Http\Request::factory([
+        $request = Request::factory([
             'cookies' => [
                 'foo' => '1',
                 'bar' => '',
@@ -49,12 +55,12 @@ class RequestTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals('1', $request->getCookieParam('foo'));
         $this->assertSame('', $request->getCookieParam('bar'));
-        $this->assertSame(['foo' => '1', 'bar' => ''], $request->getCookies());
+        $this->assertSame(['foo' => '1', 'bar' => ''], $request->getCookieParams());
     }
 
     public function testHeaders()
     {
-        $request = \Owl\Http\Request::factory([
+        $request = Request::factory([
             'headers' => [
                 'Accept-Encoding' => 'gzip,deflate',
                 'Accept-Language' => 'en-us,en;q=0.8,zh-cn;q=0.5,zh;q=0.3',
@@ -74,7 +80,7 @@ class RequestTest extends \PHPUnit_Framework_TestCase
     public function testMethod()
     {
         foreach (['get', 'post', 'put', 'delete'] as $method) {
-            $request = \Owl\Http\Request::factory([
+            $request = Request::factory([
                 'method' => $method,
             ]);
 
@@ -82,7 +88,7 @@ class RequestTest extends \PHPUnit_Framework_TestCase
             $this->assertTrue(call_user_func([$request, 'is' . $method]));
         }
 
-        $request = \Owl\Http\Request::factory([
+        $request = Request::factory([
             'method' => 'POST',
             'post' => [
                 '_method' => 'PUT',
@@ -90,7 +96,7 @@ class RequestTest extends \PHPUnit_Framework_TestCase
         ]);
         $this->assertEquals('PUT', $request->getMethod());
 
-        $request = \Owl\Http\Request::factory([
+        $request = Request::factory([
             'method' => 'POST',
             'headers' => [
                 'x-http-method-override' => 'DELETE',
@@ -105,7 +111,7 @@ class RequestTest extends \PHPUnit_Framework_TestCase
     public function testRequestURI()
     {
         $uri = '/foobar.json?foo=bar';
-        $request = \Owl\Http\Request::factory([
+        $request = Request::factory([
             'uri' => $uri,
         ]);
 
@@ -113,7 +119,7 @@ class RequestTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('/foobar.json', $request->getUri()->getPath());
         $this->assertEquals('json', $request->getUri()->getExtension());
 
-        $request = \Owl\Http\Request::factory([
+        $request = Request::factory([
             'uri' => '/',
             '_SERVER' => [
                 'SERVER_NAME' => 'test.example.com',
@@ -123,7 +129,7 @@ class RequestTest extends \PHPUnit_Framework_TestCase
         $uri = $request->getUri();
         $this->assertEquals('test.example.com', $uri->getHost());
 
-        $request = \Owl\Http\Request::factory([
+        $request = Request::factory([
             'uri' => '/',
             'headers' => [
                 'host' => 'www.example.com:88',
@@ -145,7 +151,7 @@ class RequestTest extends \PHPUnit_Framework_TestCase
             'HTTP_X_FORWARDED_FOR' => '192.168.1.2,3.3.3.3',
         ];
 
-        $request = new \Owl\Http\Request([], [], $server);
+        $request = new Request([], [], $server);
 
         $this->assertEquals('127.0.0.1', $request->getClientIP());
 
@@ -158,7 +164,7 @@ class RequestTest extends \PHPUnit_Framework_TestCase
             'HTTP_X_FORWARDED_FOR' => '192.168.1.2,192.168.1.3',
         ];
 
-        $request = new \Owl\Http\Request([], [], $server);
+        $request = new Request([], [], $server);
 
         $request->allowClientProxyIP();
         $this->assertEquals('192.168.1.2', $request->getClientIP());
