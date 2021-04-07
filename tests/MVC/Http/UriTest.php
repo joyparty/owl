@@ -1,7 +1,13 @@
 <?php
-namespace Tests\Http;
 
-class UriTest extends \PHPUnit_Framework_TestCase
+declare(strict_types=1);
+
+namespace Tests\MVC\Http;
+
+use Owl\Http\Uri;
+use PHPUnit\Framework\TestCase;
+
+class UriTest extends TestCase
 {
     public function testGetter()
     {
@@ -80,7 +86,7 @@ class UriTest extends \PHPUnit_Framework_TestCase
 
     public function testSetter()
     {
-        $uri = new \Owl\Http\Uri('http://foo:bar@www.example.com:88/p1?a=b&c=d#f');
+        $uri = new Uri('http://foo:bar@www.example.com:88/p1?a=b&c=d#f');
 
         $this->assertMethods($uri->withScheme('https'), [
             'getScheme' => 'https',
@@ -145,7 +151,7 @@ class UriTest extends \PHPUnit_Framework_TestCase
 
     public function testWithout()
     {
-        $uri = new \Owl\Http\Uri('http://foo:bar@www.example.com:88/p1?a=b&c=d#f');
+        $uri = new Uri('http://foo:bar@www.example.com:88/p1?a=b&c=d#f');
 
         $this->assertMethods($uri->withoutScheme(), [
             'getScheme' => '',
@@ -191,7 +197,7 @@ class UriTest extends \PHPUnit_Framework_TestCase
     private function assertMethods($uri, $asserts)
     {
         if (is_string($uri)) {
-            $uri = new \Owl\Http\Uri($uri);
+            $uri = new Uri($uri);
         }
 
         foreach ($asserts as $method => $value) {
