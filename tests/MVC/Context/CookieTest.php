@@ -94,7 +94,7 @@ class CookieTest extends TestCase
 
     public function testCookieEncryptWithOpenssl()
     {
-        if (!extension_loaded('mcrypt')) {
+        if (!extension_loaded('openssl')) {
             $this->markTestSkipped('没有加载mcrypt模块，无法测试cookie openssl加密功能');
         }
 
@@ -105,12 +105,12 @@ class CookieTest extends TestCase
         ];
 
         $methods = [
-            'AES-128-CBC',
-            'AES-192-CBC',
-            'AES-256-CBC',
-            'AES-128-CTR',
-            'AES-192-CTR',
-            'AES-256-CTR',
+            'aes-128-cbc',
+            'aes-192-cbc',
+            'aes-256-cbc',
+            'aes-128-ctr',
+            'aes-192-ctr',
+            'aes-256-ctr',
         ];
 
         foreach ($methods as $method) {
