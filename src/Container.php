@@ -2,6 +2,9 @@
 
 namespace Owl;
 
+use \Closure;
+use \UnexpectedValueException;
+
 /**
  * 依赖注入容器.
  *
@@ -35,7 +38,7 @@ class Container
      * @param string  $id
      * @param Closure $callback
      */
-    public function set($id, \Closure $callback)
+    public function set($id, Closure $callback)
     {
         $this->callbacks[$id] = $callback;
     }
@@ -62,7 +65,7 @@ class Container
      *
      * @return mixed
      *
-     * @throws 指定的$id不存在时
+     * @throws UnexpectedValueException 指定的$id不存在时
      */
     public function get($id)
     {
@@ -96,9 +99,9 @@ class Container
      *
      * @param string $id
      *
-     * @return Closuer
+     * @return Closure
      *
-     * @throws 指定的$id不存在时
+     * @throws UnexpectedValueException 指定的$id不存在时
      */
     public function getCallback($id)
     {
@@ -106,7 +109,7 @@ class Container
             return $this->callbacks[$id];
         }
 
-        throw new \UnexpectedValueException(sprintf('"%s" does not exists in container', $id));
+        throw new UnexpectedValueException(sprintf('"%s" does not exists in container', $id));
     }
 
     /**
