@@ -1,12 +1,19 @@
 <?php
 
-namespace Tests\Http;
+declare(strict_types=1);
 
-class StreamTest extends \PHPUnit_Framework_TestCase
+namespace Tests\MVC\Http;
+
+use Owl\Http\IteratorStream;
+use Owl\Http\ResourceStream;
+use Owl\Http\StringStream;
+use PHPUnit\Framework\TestCase;
+
+class StreamTest extends TestCase
 {
     public function testResource()
     {
-        $stream = new \Owl\Http\ResourceStream(fopen('php://memory', 'r+'));
+        $stream = new ResourceStream(fopen('php://memory', 'r+'));
 
         $this->assertSame(0, $stream->getSize());
 
@@ -27,7 +34,7 @@ class StreamTest extends \PHPUnit_Framework_TestCase
 
     public function testString()
     {
-        $stream = new \Owl\Http\StringStream('foo');
+        $stream = new StringStream('foo');
 
         $this->assertSame(3, $stream->getSize());
         $this->assertSame('foo', (string) $stream);
@@ -58,9 +65,7 @@ class StreamTest extends \PHPUnit_Framework_TestCase
             }
         };
 
-        $stream = new \Owl\Http\IteratorStream($fn());
-        $iterator = $stream->iterator();
-
+        $stream = new IteratorStream($fn());
         foreach ($stream->iterator() as $string) {
             switch ($stream->tell()) {
                 case 1:
@@ -77,7 +82,7 @@ class StreamTest extends \PHPUnit_Framework_TestCase
 
         $this->assertTrue($stream->eof());
 
-        $stream = new \Owl\Http\IteratorStream($fn());
+        $stream = new IteratorStream($fn());
         $this->assertSame('foobarbaz', (string) $stream);
     }
 }
