@@ -71,7 +71,7 @@ class Cookie
 
     private function normalizeDomain($domain)
     {
-        $domain = trim(strtolower($domain), '.');
+        $domain = trim(strtolower(strval($domain)), '.');
 
         return $domain ? '.' . $domain . '.' : '.';
     }
