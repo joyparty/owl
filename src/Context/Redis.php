@@ -14,8 +14,19 @@ namespace Owl\Context;
  */
 class Redis extends \Owl\Context
 {
+    /**
+     * @var array
+     */
     protected $data;
+
+    /**
+     * @var array
+     */
     protected $saved_keys;
+
+    /**
+     * @var bool
+     */
     protected $dirty = false;
 
     public function __construct(array $config)
