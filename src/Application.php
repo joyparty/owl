@@ -5,6 +5,8 @@ namespace Owl;
 use Owl\Http\Exception as HttpException;
 use Owl\Http\Request;
 use Owl\Http\Response;
+use Owl\Http\StringStream;
+use Throwable;
 
 /**
  * @example
@@ -121,7 +123,7 @@ class Application
             }
 
             $this->middleware->execute([$request, $response]);
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             call_user_func($exception_handler, $exception, $request, $response);
         }
 
@@ -144,7 +146,7 @@ class Application
             $code = $exception instanceof HttpException ? $exception->getCode() : 500;
 
             $response->withStatus($code)
-                     ->withBody(new \Owl\Http\StringStream('')); // reset response body
+                     ->withBody(new StringStream('')); // reset response body
         };
     }
 
