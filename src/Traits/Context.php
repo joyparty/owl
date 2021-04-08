@@ -2,6 +2,9 @@
 
 namespace Owl\Traits;
 
+use Owl\Context as BaseContext;
+use RuntimeException;
+
 /**
  * @example
  *
@@ -20,6 +23,9 @@ namespace Owl\Traits;
  */
 trait Context
 {
+    /**
+     * @var BaseContext
+     */
     protected $context_handler;
 
     public function setContext($key, $val)
@@ -52,7 +58,7 @@ trait Context
         return $this->getContextHandler(true)->save();
     }
 
-    public function setContextHandler(\Owl\Context $handler)
+    public function setContextHandler(BaseContext $handler)
     {
         $this->context_handler = $handler;
     }
@@ -60,7 +66,7 @@ trait Context
     public function getContextHandler($throw_exception = false)
     {
         if (!$this->context_handler && $throw_exception) {
-            throw new \RuntimeException('Please set context handler before use');
+            throw new RuntimeException('Please set context handler before use');
         }
 
         return $this->context_handler ?: false;
