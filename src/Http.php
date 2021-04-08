@@ -6,6 +6,8 @@ class Http
 {
     const SWITCHING_PROTOCOLS = 101;
     const PROCESSING = 102;
+    const EARLY_HINTS = 103;
+
     const OK = 200;
     const CREATED = 201;
     const ACCEPTED = 202;
@@ -15,6 +17,8 @@ class Http
     const PARTIAL_CONTENT = 206;
     const MULTI_STATUS = 207;
     const ALREADY_REPORTED = 208;
+    const IM_USED = 226;
+
     const MULTIPLE_CHOICES = 300;
     const MOVED_PERMANENTLY = 301;
     const FOUND = 302;
@@ -23,6 +27,8 @@ class Http
     const USE_PROXY = 305;
     const SWITCH_PROXY = 306;
     const TEMPORARY_REDIRECT = 307;
+    const PERMANENT_REDIRECT = 308;
+
     const BAD_REQUEST = 400;
     const UNAUTHORIZED = 401;
     const PAYMENT_REQUIRED = 402;
@@ -42,6 +48,7 @@ class Http
     const REQUESTED_RANGE_NOT_SATISFIABLE = 416;
     const EXPECTATION_FAILED = 417;
     const IM_A_TEAPOT = 418;
+    const MISDIRECTED_REQUEST = 421;
     const UNPROCESSABLE_ENTITY = 422;
     const LOCKED = 423;
     const FAILED_DEPENDENCY = 424;
@@ -51,6 +58,7 @@ class Http
     const TOO_MANY_REQUESTS = 429;
     const REQUEST_HEADER_FIELDS_TOO_LARGE = 431;
     const UNAVAILABLE_FOR_LEGAL_REASONS = 451;
+
     const INTERNAL_SERVER_ERROR = 500;
     const NOT_IMPLEMENTED = 501;
     const BAD_GATEWAY = 502;
@@ -60,6 +68,7 @@ class Http
     const VARIANT_ALSO_NEGOTIATES = 506;
     const INSUFFICIENT_STORAGE = 507;
     const LOOP_DETECTED = 508;
+    const NOT_EXTENDED = 510;
     const NETWORK_AUTHENTICATION_REQUIRED = 511;
 
     protected static $phrases = [
@@ -67,6 +76,7 @@ class Http
         100 => 'Continue',
         101 => 'Switching Protocols',
         102 => 'Processing',
+        103 => 'Early Hints',
         // SUCCESS CODES
         200 => 'OK',
         201 => 'Created',
@@ -77,6 +87,7 @@ class Http
         206 => 'Partial Content',
         207 => 'Multi-status',
         208 => 'Already Reported',
+        226 => 'IM Used',
         // REDIRECTION CODES
         300 => 'Multiple Choices',
         301 => 'Moved Permanently',
@@ -86,6 +97,7 @@ class Http
         305 => 'Use Proxy',
         306 => 'Switch Proxy', // Deprecated
         307 => 'Temporary Redirect',
+        308 => 'Permanent Redirect',
         // CLIENT ERROR
         400 => 'Bad Request',
         401 => 'Unauthorized',
@@ -107,6 +119,7 @@ class Http
         417 => 'Expectation Failed',
         418 => 'I\'m a teapot',
         422 => 'Unprocessable Entity',
+        421 => 'Misdirected Request',
         423 => 'Locked',
         424 => 'Failed Dependency',
         425 => 'Unordered Collection',
@@ -125,6 +138,7 @@ class Http
         506 => 'Variant Also Negotiates',
         507 => 'Insufficient Storage',
         508 => 'Loop Detected',
+        510 => 'Not Extended',
         511 => 'Network Authentication Required',
     ];
 
