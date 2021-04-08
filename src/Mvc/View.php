@@ -2,6 +2,8 @@
 
 namespace Owl\Mvc;
 
+use Exception;
+
 class View
 {
     const BLOCK_REPLACE = 'replace';
@@ -20,11 +22,13 @@ class View
 
     /**
      * @param string $directory View file directory
+     *
+     * @throws
      */
     public function __construct($directory)
     {
         if (!realpath($directory)) {
-            throw new \Exception('View directory "' . $directory . '" not exist!');
+            throw new Exception('View directory "' . $directory . '" not exist!');
         }
 
         $directory = realpath($directory);
@@ -71,7 +75,7 @@ class View
      */
     public function get($key)
     {
-        return isset($this->vars[$key]) ? $this->vars[$key] : false;
+        return $this->vars[$key] ?? false;
     }
 
     /**
@@ -120,19 +124,19 @@ class View
      * @param array  $vars
      * @param bool   $return_content
      *
-     * @return void|string
+     * @return string|void
      */
     protected function includeView($view, array $vars = [], $return_content = false)
     {
         $view_file = $this->directory . $view . '.php';
 
         if (!$file = realpath($view_file)) {
-            throw new \Exception('View file "' . $view_file . '" not exist!');
+            throw new Exception('View file "' . $view_file . '" not exist!');
         }
 
         // 安全性检查，视图文件必须在视图目录下
         if (strpos($file, $this->directory) !== 0) {
-            throw new \Exception('Invalid view file "' . $file . '"');
+            throw new Exception('Invalid view file "' . $file . '"');
         }
 
         $this->included_view[$view] = true;
