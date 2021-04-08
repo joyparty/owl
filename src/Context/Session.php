@@ -2,7 +2,9 @@
 
 namespace Owl\Context;
 
-class Session extends \Owl\Context
+use Owl\Context as BaseContext;
+
+class Session extends BaseContext
 {
     public function set($key, $val)
     {
@@ -14,11 +16,11 @@ class Session extends \Owl\Context
     public function get($key = null)
     {
         $token = $this->getToken();
-        $context = isset($_SESSION[$token]) ? $_SESSION[$token] : [];
+        $context = $_SESSION[$token] ?? [];
 
         return ($key === null)
              ? $context
-             : (isset($context[$key]) ? $context[$key] : null);
+             : ($context[$key] ?? null);
     }
 
     public function has($key)
