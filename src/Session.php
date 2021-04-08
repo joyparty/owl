@@ -2,9 +2,12 @@
 
 namespace Owl;
 
-class Session implements \ArrayAccess
+use ArrayAccess;
+use Owl\Traits\Singleton;
+
+class Session implements ArrayAccess
 {
-    use \Owl\Traits\Singleton;
+    use Singleton;
 
     protected $start;
     protected $data = [];
