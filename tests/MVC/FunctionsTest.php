@@ -103,11 +103,20 @@ class FunctionsTest extends TestCase
         ], $target);
     }
 
-    /**
-     * @depends testArraySetIn
-     */
-    public function testArrayGetIn(array $target)
+    public function testArrayGetIn()
     {
+        $target = [
+            'a' => [
+                'b' => [
+                    'c' => [
+                        'd' => 1,
+                    ],
+                    'e' => 2,
+                ],
+            ],
+            'f' => 3,
+        ];
+
         $this->assertSame(3, \Owl\array_get_in($target, ['f']));
         $this->assertSame(1, \Owl\array_get_in($target, ['a', 'b', 'c', 'd']));
         $this->assertSame(2, \Owl\array_get_in($target, ['a', 'b', 'e']));
@@ -120,11 +129,20 @@ class FunctionsTest extends TestCase
         return $target;
     }
 
-    /**
-     * @depends testArrayGetIn
-     */
-    public function testArrayUnsetIn(array $target)
+    public function testArrayUnsetIn()
     {
+        $target = [
+            'a' => [
+                'b' => [
+                    'c' => [
+                        'd' => 1,
+                    ],
+                    'e' => 2,
+                ],
+            ],
+            'f' => 3,
+        ];
+
         \Owl\array_unset_in($target, ['a', 'b', 'e']);
         $this->assertSame([
             'a' => [
