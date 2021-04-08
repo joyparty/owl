@@ -2,6 +2,8 @@
 
 namespace Owl\Context;
 
+use Owl\Context as BaseContext;
+
 /**
  * @example
  * $config = array(
@@ -12,7 +14,7 @@ namespace Owl\Context;
  *
  * $context = new \Owl\Context\Redis($config);
  */
-class Redis extends \Owl\Context
+class Redis extends BaseContext
 {
     /**
      * @var array
@@ -61,7 +63,7 @@ class Redis extends \Owl\Context
             return $this->data;
         }
 
-        return isset($this->data[$key]) ? $this->data[$key] : null;
+        return $this->data[$key] ?? null;
     }
 
     public function has($key)
