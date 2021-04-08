@@ -2,7 +2,9 @@
 
 namespace Owl\Swoole;
 
-class Request extends \Owl\Http\Request
+use Owl\Http\Request as BaseRequest;
+
+class Request extends BaseRequest
 {
     protected $swoole_request;
 

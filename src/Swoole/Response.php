@@ -2,7 +2,10 @@
 
 namespace Owl\Swoole;
 
-class Response extends \Owl\Http\Response
+use Owl\Http\IteratorStream;
+use Owl\Http\Response as BaseResponse;
+
+class Response extends BaseResponse
 {
     protected $swoole_response;
 
@@ -35,7 +38,7 @@ class Response extends \Owl\Http\Response
         }
 
         $body = $this->getBody();
-        if ($body instanceof \Owl\Http\IteratorStream) {
+        if ($body instanceof IteratorStream) {
             foreach ($body->iterator() as $string) {
                 $response->write($string);
             }
