@@ -1,7 +1,15 @@
 <?php
+
 namespace Owl\Mvc;
 
+use Owl\Http\Exception as HttpException;
+use Owl\Http\Request;
+use Owl\Http\Response;
+use Owl\Parameter\Validator;
 use Owl\Logger;
+use Owl\Middleware;
+use Psr\Http\Message\StreamInterface;
+use Throwable;
 
 /**
  * @example
@@ -30,7 +38,7 @@ class Router
     protected $config;
 
     /**
-     * @var \Owl\middleware
+     * @var Middleware
      */
     protected $middleware;
 
@@ -49,17 +57,17 @@ class Router
      */
     protected $children = [];
 
-    protected function __beforeRespond(\Owl\Http\Request $request, \Owl\Http\Response $response, $controller, array $paramters)
+    protected function __beforeRespond(Request $request, Response $response, $controller, array $paramters)
     {
     }
 
-    protected function __afterRespond(\Owl\Http\Request $request, \Owl\Http\Response $response, $controller, array $paramters)
+    protected function __afterRespond(Request $request, Response $response, $controller, array $paramters)
     {
     }
 
     public function __construct(array $config = [])
     {
-        (new \Owl\Parameter\Validator())->execute($config, [
+        (new Validator())->execute($config, [
             'namespace' => ['type' => 'string'],
             'base_path' => ['type' => 'string', 'required' => false, 'regexp' => '#^/.+#'],
             'rewrite' => ['type' => 'hash', 'required' => false, 'allow_empty' => true, 'keys' => []],
@@ -75,7 +83,7 @@ class Router
 
         $this->config = $config;
 
-        $this->middleware = new \Owl\Middleware();
+        $this->middleware = new Middleware();
     }
 
     /**
@@ -85,9 +93,7 @@ class Router
      */
     public function getConfig($key)
     {
-        return isset($this->config[$key])
-        ? $this->config[$key]
-        : false;
+        return $this->config[$key] ?? false;
     }
 
     /**
@@ -106,10 +112,10 @@ class Router
     /**
      * 把指定路径的访问委托到另外一个router.
      *
-     * @param string         $path
-     * @param Owl\Mvc\Router $router
+     * @param string $path
+     * @param Router $router
      *
-     * @return $this
+     * @return self
      */
     public function delegate($path, Router $router)
     {
@@ -150,12 +156,13 @@ class Router
     }
 
     /**
-     * @param \Owl\Http\Request  $request
-     * @param \Owl\Http\Response $response
+     * @param Request  $request
+     * @param Response $response
      *
      * @return $response
+     * @throws
      */
-    public function execute(\Owl\Http\Request $request, \Owl\Http\Response $response)
+    public function execute(Request $request, Response $response)
     {
         if ($router = $this->getDelegateRouter($request)) {
             return $router->execute($request, $response);
@@ -173,13 +180,7 @@ class Router
 
                 $this->middleware->execute([$request, $response], $handlers);
             }
-        } catch (\Exception $exception) {
-            if ($this->exception_handler) {
-                call_user_func($this->exception_handler, $exception, $request, $response);
-            } else {
-                throw $exception;
-            }
-        } catch (\Throwable $error) {
+        } catch (Throwable $error) {
             if ($this->exception_handler) {
                 call_user_func($this->exception_handler, $error, $request, $response);
             } else {
@@ -193,9 +194,9 @@ class Router
     /**
      * @param callable $handler
      *
-     * @return $this
+     * @return self
      */
-    public function setExceptionHandler($handler)
+    public function setExceptionHandler($handler): self
     {
         $this->exception_handler = $handler;
 
@@ -203,15 +204,13 @@ class Router
     }
 
     /**
-     * @param \Owl\Http\Request  $request
-     * @param \Owl\Http\Response $response
+     * @param Request  $request
+     * @param Response $response
      *
-     * @return \Owl\Http\Response $response
-     *
-     * @throws \Owl\Http\Exception 404
-     * @throws \Owl\Http\Exception 501
+     * @return Response
+     * @throws HttpException
      */
-    protected function respond(\Owl\Http\Request $request, \Owl\Http\Response $response)
+    protected function respond(Request $request, Response $response)
     {
         Logger::log('debug', 'router respond', [
             'url' => (string) $request->getUri(),
@@ -227,7 +226,7 @@ class Router
         ]);
 
         if (!class_exists($class)) {
-            throw \Owl\Http\Exception::factory(404);
+            throw HttpException::factory(404);
         }
 
         $controller = new $class($request, $response);
@@ -240,16 +239,16 @@ class Router
         }
 
         if (!method_exists($controller, $method)) {
-            throw \Owl\Http\Exception::factory(405);
+            throw HttpException::factory(405);
         }
 
         $this->__beforeRespond($request, $response, $controller, $parameters);
 
         // 如果__beforeExecute()返回了内容就直接返回内容
         if (method_exists($controller, '__beforeExecute') && ($data = call_user_func_array([$controller, '__beforeExecute'], $parameters))) {
-            if ($data instanceof \Psr\Http\Message\StreamInterface) {
+            if ($data instanceof StreamInterface) {
                 $response->withBody($data);
-            } elseif (!($data instanceof \Owl\Http\Response)) {
+            } elseif (!($data instanceof Response)) {
                 $response->write($data);
             }
 
@@ -257,9 +256,9 @@ class Router
         }
 
         $data = call_user_func_array([$controller, $method], $parameters);
-        if ($data instanceof \Psr\Http\Message\StreamInterface) {
+        if ($data instanceof StreamInterface) {
             $response->withBody($data);
-        } elseif ($data !== null && !($data instanceof \Owl\Http\Response)) {
+        } elseif ($data !== null && !($data instanceof Response)) {
             $response->write($data);
         }
 
@@ -278,7 +277,10 @@ class Router
      * @param string $path
      * @param array  $rules
      *
-     * @return [string $class, array $parameters]
+     * @return array|false [
+     *      0: $class,
+     *      1: <array>
+     * ]
      */
     protected function byRewrite($path, array $rules = null)
     {
@@ -308,7 +310,10 @@ class Router
      *
      * @param string $path
      *
-     * @return [string $class, array $parameters]
+     * @return array [
+     *      0: $class,
+     *      1: <array>
+     * ]
      */
     protected function byPath($path)
     {
@@ -362,6 +367,7 @@ class Router
      * @param string $path
      *
      * @return string
+     * @throws
      */
     protected function trimBasePath($path)
     {
@@ -372,7 +378,7 @@ class Router
         }
 
         if (stripos($path, $base_path) !== 0) {
-            throw \Owl\Http\Exception::factory(404);
+            throw HttpException::factory(404);
         }
 
         return '/' . substr($path, strlen($base_path));
@@ -381,11 +387,11 @@ class Router
     /**
      * get middleware handlers by request path.
      *
-     * @param Owl\Http\Request $request
+     * @param Request $request
      *
      * @return array
      */
-    protected function getMiddlewareHandlers(\Owl\Http\Request $request)
+    protected function getMiddlewareHandlers(Request $request): array
     {
         if (!$this->middleware_handlers) {
             return [];
@@ -406,11 +412,11 @@ class Router
     /**
      * 获得托管的下级router.
      *
-     * @param Owl\Http\Request $request
+     * @param Request $request
      *
-     * @return Owl\Mvc\Router | false
+     * @return Router|false
      */
-    protected function getDelegateRouter(\Owl\Http\Request $request)
+    protected function getDelegateRouter(Request $request)
     {
         if (!$this->children) {
             return false;
@@ -430,11 +436,12 @@ class Router
     /**
      * 获得请求路径，去掉了base_path后的内容.
      *
-     * @param Owl\Http\Request $request
+     * @param Request $request
      *
      * @return string
+     * @throws
      */
-    protected function getRequestPath(\Owl\Http\Request $request)
+    protected function getRequestPath(Request $request)
     {
         $path = $this->normalizePath($request->getUri()->getPath());
 
