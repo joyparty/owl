@@ -2,6 +2,8 @@
 
 namespace Owl\Swoole;
 
+use Owl\Application as BaseApplication;
+
 /*
  * @example
  *
@@ -44,7 +46,7 @@ if (!extension_loaded('swoole')) {
     throw new \Exception('Require php extension "swoole"');
 }
 
-class Application extends \Owl\Application
+class Application extends BaseApplication
 {
     protected $server;
 
@@ -55,8 +57,8 @@ class Application extends \Owl\Application
         $this->server = $server = new \swoole_http_server($ip, $port);
 
         $server->on('Request', function ($request, $response) {
-            $request = new \Owl\Swoole\Request($request);
-            $response = new \Owl\Swoole\Response($response);
+            $request = new Request($request);
+            $response = new Response($response);
 
             $this->execute($request, $response);
         });
