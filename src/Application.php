@@ -67,7 +67,7 @@ class Application
      *
      * @param callable $handler
      *
-     * @return $this
+     * @return self
      * @throws
      */
     public function middleware($handler)
@@ -90,7 +90,7 @@ class Application
      *
      * @param callable $handler
      *
-     * @return $this
+     * @return self
      */
     public function setExceptionHandler($handler)
     {
