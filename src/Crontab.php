@@ -2,12 +2,13 @@
 
 namespace Owl;
 
+use Owl\Traits\Context;
 use Psr\Log\LoggerInterface;
 use Throwable;
 
 abstract class Crontab
 {
-    use \Owl\Traits\Context;
+    use Context;
 
     const KEY_PROC_ID = '__proc_id__';
     const KEY_PROC_TIME = '__proc_start__';
