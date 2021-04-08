@@ -48,7 +48,11 @@ abstract class Context
         return $this->getConfig('token');
     }
 
-    // 保存上下文数据，根据需要重载
+    /**
+     * 保存上下文数据，根据需要重载.
+     *
+     * @return mixed|void
+     */
     public function save()
     {
     }
