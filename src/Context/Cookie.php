@@ -33,16 +33,23 @@
 
 namespace Owl\Context;
 
-class Cookie extends \Owl\Context
+use Owl\Context as BaseContext;
+use Owl\Http\Request;
+use Owl\Http\Response;
+use Owl\Logger;
+use Owl\Parameter\Validator;
+use RuntimeException;
+
+class Cookie extends BaseContext
 {
     protected $data;
     protected $response;
 
     public function __construct(array $config)
     {
-        (new \Owl\Parameter\Validator())->execute($config, [
-            'request' => ['type' => 'object', 'instanceof' => '\Owl\Http\Request'],
-            'response' => ['type' => 'object', 'instanceof' => '\Owl\Http\Response'],
+        (new Validator())->execute($config, [
+            'request' => ['type' => 'object', 'instanceof' => Request::class],
+            'response' => ['type' => 'object', 'instanceof' => Response::class],
         ]);
 
         parent::__construct($config);
@@ -62,7 +69,7 @@ class Cookie extends \Owl\Context
 
         return ($key === null)
              ? $data
-             : (isset($data[$key]) ? $data[$key] : null);
+             : ($data[$key] ?? null);
     }
 
     public function has($key)
@@ -92,7 +99,11 @@ class Cookie extends \Owl\Context
         $this->salt = null;
     }
 
-    // 保存到cookie
+    /**
+     * 保存到cookie.
+     *
+     * @return mixed
+     */
     public function save()
     {
         $token = $this->getToken();
@@ -108,26 +119,28 @@ class Cookie extends \Owl\Context
         return $data;
     }
 
-    // 从cookie恢复数据
+    /**
+     * 从cookie恢复数据.
+     */
     protected function restore()
     {
         if ($this->data !== null) {
             return $this->data;
         }
 
-        do {
-            if (!$data = $this->getConfig('request')->getCookieParam($this->getToken())) {
-                break;
-            }
+        $this->data = [];
+        if (!$data = $this->getConfig('request')->getCookieParam($this->getToken())) {
+            goto ret;
+        }
 
-            if (!$data = $this->decode($data)) {
-                break;
-            }
+        if (!$data = $this->decode($data)) {
+            goto ret;
+        }
 
-            return $this->data = $data;
-        } while (false);
+        $this->data = $data;
 
-        return $this->data = [];
+        ret:
+        return $this->data;
     }
 
     // 把上下文数据编码为字符串
@@ -190,7 +203,7 @@ class Cookie extends \Owl\Context
                     throw $exception;
                 }
 
-                \Owl\Logger::log('error', 'cookie context json decode failed', [
+                Logger::log('error', 'cookie context json decode failed', [
                     'message' => $exception->getMessage(),
                     'code' => $exception->getCode(),
                 ]);
@@ -228,11 +241,11 @@ class Cookie extends \Owl\Context
     protected function getSignSalt($string)
     {
         if (($salt = $this->getConfig('sign_salt')) === null) {
-            throw new \RuntimeException('Require signature salt');
+            throw new RuntimeException('Require signature salt');
         }
 
         if (is_callable($salt) && (!$salt = call_user_func($salt, $string))) {
-            throw new \RuntimeException('Salt function return noting');
+            throw new RuntimeException('Salt function return noting');
         }
 
         if ($this->getConfig('bind_ip')) {
@@ -275,19 +288,19 @@ class Cookie extends \Owl\Context
         $config = $this->getConfig('encrypt') ?: [];
 
         if (!isset($config[0]) || !$config[0]) {
-            throw new \RuntimeException('Require encrypt salt string');
+            throw new RuntimeException('Require encrypt salt string');
         }
 
         $salt = $config[0];
 
         $cipher = isset($config[1]) ? $config[1] : MCRYPT_RIJNDAEL_256;
         if (!in_array($cipher, mcrypt_list_algorithms())) {
-            throw new \RuntimeException('Unsupport encrypt cipher: ' . $cipher);
+            throw new RuntimeException('Unsupport encrypt cipher: ' . $cipher);
         }
 
         $mode = isset($config[2]) ? $config[2] : MCRYPT_MODE_CBC;
         if (!in_array($mode, mcrypt_list_modes())) {
-            throw new \RuntimeException('Unsupport encrypt mode: ' . $mode);
+            throw new RuntimeException('Unsupport encrypt mode: ' . $mode);
         }
 
         if (isset($config[3])) {
