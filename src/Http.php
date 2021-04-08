@@ -1,4 +1,5 @@
 <?php
+
 namespace Owl;
 
 class Http
@@ -127,10 +128,13 @@ class Http
         511 => 'Network Authentication Required',
     ];
 
+    /**
+     * @param int $code
+     *
+     * @return string|null
+     */
     public static function getStatusPhrase($code)
     {
-        return isset(self::$phrases[$code])
-        ? self::$phrases[$code]
-        : null;
+        return self::$phrases[$code] ?? null;
     }
 }
