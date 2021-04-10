@@ -8,3 +8,9 @@ defined('TEST') or define('TEST', true);
 define('TEST_DIR', __DIR__);
 
 require __DIR__ . '/../vendor/autoload.php';
+
+\Owl\Service\Container::getInstance()->setServices([
+    'mock.storage' => [
+        'class' => \Tests\ORM\Mock\DataMapper\Service::class,
+    ],
+]);
