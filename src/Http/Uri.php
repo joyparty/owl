@@ -1,4 +1,5 @@
 <?php
+
 namespace Owl\Http;
 
 use Psr\Http\Message\UriInterface;
@@ -43,11 +44,17 @@ class Uri implements UriInterface
         }
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getScheme()
     {
         return $this->scheme;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getAuthority()
     {
         if (!$authority = $this->getHost()) {
@@ -65,6 +72,9 @@ class Uri implements UriInterface
         return $authority;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getUserInfo()
     {
         $user_info = $this->user;
@@ -76,11 +86,17 @@ class Uri implements UriInterface
         return $user_info;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getHost()
     {
         return $this->host;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getPort()
     {
         $port = $this->port;
@@ -97,16 +113,22 @@ class Uri implements UriInterface
         return $port;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getPath()
     {
         return $this->path ?: '/';
     }
 
-    public function getExtension()
+    public function getExtension(): string
     {
         return pathinfo($this->path, PATHINFO_EXTENSION);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getQuery()
     {
         $query = '';
@@ -118,11 +140,17 @@ class Uri implements UriInterface
         return $query;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getFragment()
     {
         return $this->fragment;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function withScheme($scheme)
     {
         $uri = clone $this;
@@ -136,6 +164,9 @@ class Uri implements UriInterface
         return $this->withScheme('');
     }
 
+    /**
+     * @inheritDoc
+     */
     public function withUserInfo($user, $password = null)
     {
         $uri = clone $this;
@@ -150,6 +181,9 @@ class Uri implements UriInterface
         return $this->withUserInfo('', '');
     }
 
+    /**
+     * @inheritDoc
+     */
     public function withHost($host)
     {
         $uri = clone $this;
@@ -163,6 +197,9 @@ class Uri implements UriInterface
         return $this->withHost('');
     }
 
+    /**
+     * @inheritDoc
+     */
     public function withPort($port)
     {
         $uri = clone $this;
@@ -176,6 +213,9 @@ class Uri implements UriInterface
         return $this->withPort(null);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function withPath($path)
     {
         $uri = clone $this;
@@ -189,6 +229,9 @@ class Uri implements UriInterface
         return $this->withPath('');
     }
 
+    /**
+     * @inheritDoc
+     */
     public function withQuery($query)
     {
         if (is_string($query)) {
@@ -216,6 +259,10 @@ class Uri implements UriInterface
      * $uri->withoutQuery();                // without all
      * $uri->withoutQuery(['foo', 'bar']);
      * $uri->withoutQuery('foo', 'bar');
+     *
+     * @param array|mixed $keys
+     *
+     * @return self
      */
     public function withoutQuery($keys = null)
     {
@@ -239,6 +286,9 @@ class Uri implements UriInterface
         return $uri;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function withFragment($fragment)
     {
         if (!is_string($fragment)) {
@@ -256,6 +306,9 @@ class Uri implements UriInterface
         return $this->withFragment('');
     }
 
+    /**
+     * @inheritDoc
+     */
     public function __toString()
     {
         $uri = '';
