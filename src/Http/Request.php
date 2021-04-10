@@ -5,9 +5,12 @@ namespace Owl\Http;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
 
+/**
+ * @property array $server
+ */
 class Request implements ServerRequestInterface
 {
-    use \Owl\Http\MessageTrait;
+    use MessageTrait;
 
     protected $get;
     protected $post;
@@ -35,9 +38,9 @@ class Request implements ServerRequestInterface
     }
 
     /**
-     * @param string $key
+     * @param string|null $key
      *
-     * @return mixed | array
+     * @return mixed|array
      */
     public function get($key = null)
     {
@@ -45,13 +48,13 @@ class Request implements ServerRequestInterface
             return $this->get;
         }
 
-        return isset($this->get[$key]) ? $this->get[$key] : null;
+        return $this->get[$key] ?? null;
     }
 
     /**
      * @param string $key
      *
-     * @return mixed | array
+     * @return mixed|array
      */
     public function post($key = null)
     {
@@ -59,7 +62,7 @@ class Request implements ServerRequestInterface
             return $this->post;
         }
 
-        return isset($this->post[$key]) ? $this->post[$key] : null;
+        return $this->post[$key] ?? null;
     }
 
     /**
@@ -89,7 +92,7 @@ class Request implements ServerRequestInterface
      */
     public function getRequestTarget()
     {
-        return isset($this->server['REQUEST_URI']) ? $this->server['REQUEST_URI'] : '/';
+        return $this->server['REQUEST_URI'] ?? '/';
     }
 
     /**
@@ -117,7 +120,7 @@ class Request implements ServerRequestInterface
             return $this->method;
         }
 
-        $method = isset($this->server['REQUEST_METHOD']) ? strtoupper($this->server['REQUEST_METHOD']) : 'GET';
+        $method = strtoupper($this->server['REQUEST_METHOD'] ?? 'GET');
         if ('POST' !== $method) {
             return $this->method = $method;
         }
@@ -152,7 +155,7 @@ class Request implements ServerRequestInterface
     /**
      * {@inheritdoc}
      *
-     * @return \Owl\Http\Uri
+     * @return Uri
      */
     public function getUri()
     {
@@ -190,10 +193,12 @@ class Request implements ServerRequestInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      *
-     * @param \Psr\Http\Message\UriInterface $uri
-     * @param bool                           $preserveHost
+     * @param UriInterface $uri
+     * @param bool $preserveHost
+     *
+     * @throws
      */
     public function withUri(UriInterface $uri, $preserveHost = false)
     {
@@ -201,9 +206,7 @@ class Request implements ServerRequestInterface
     }
 
     /**
-     * {@inheritdoc}
-     *
-     * @return array
+     * @inheritDoc
      */
     public function getServerParams()
     {
@@ -211,21 +214,19 @@ class Request implements ServerRequestInterface
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @param string $name
      *
-     * @return mixed | false
+     * @return mixed|false
      */
     public function getServerParam($name)
     {
         $name = strtoupper($name);
 
-        return isset($this->server[$name]) ? $this->server[$name] : false;
+        return $this->server[$name] ?? false;
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      *
      * @return array
      */
@@ -235,19 +236,17 @@ class Request implements ServerRequestInterface
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @param string $name
      *
-     * @return mixed | false
+     * @return mixed|false
      */
     public function getCookieParam($name)
     {
-        return isset($this->cookies[$name]) ? $this->cookies[$name] : false;
+        return $this->cookies[$name] ?? false;
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      *
      * @param array $cookies
      *
@@ -263,7 +262,7 @@ class Request implements ServerRequestInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      *
      * @return array
      */
@@ -273,7 +272,7 @@ class Request implements ServerRequestInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      *
      * @param array $query
      *
@@ -289,7 +288,7 @@ class Request implements ServerRequestInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      *
      * @return array
      */
@@ -297,7 +296,7 @@ class Request implements ServerRequestInterface
     {
         $files = [];
 
-        foreach (self::normailizeUploadedFiles($this->files) as $key => $file) {
+        foreach (self::normalizeUploadedFiles($this->files) as $key => $file) {
             if (isset($file['name'])) {
                 $files[$key] = new UploadedFile($file);
             } else {
@@ -315,19 +314,15 @@ class Request implements ServerRequestInterface
     }
 
     /**
-     * {@inheritdoc}
-     *
-     * @param array $uploadFiles
+     * @inheritDoc
      */
-    public function withUploadedFiles(array $uploadFiles)
+    public function withUploadedFiles(array $uploadedFiles)
     {
         throw new \Exception('Request::withUploadedFiles() not implemented');
     }
 
     /**
-     * {@inheritdoc}
-     *
-     * @return string | array
+     * @inheritDoc
      */
     public function getParsedBody()
     {
@@ -341,7 +336,7 @@ class Request implements ServerRequestInterface
         $body = (string) $this->body;
 
         if ('' === $body) {
-            return;
+            return null;
         }
 
         if (false !== \strpos($content_type, 'application/json')) {
@@ -352,9 +347,7 @@ class Request implements ServerRequestInterface
     }
 
     /**
-     * {@inheritdoc}
-     *
-     * @param mixed $data
+     * @inheritDoc
      */
     public function withParsedBody($data)
     {
@@ -425,42 +418,27 @@ class Request implements ServerRequestInterface
         return array_shift($ip_set) ?: '0.0.0.0';
     }
 
-    /**
-     * @return bool
-     */
-    public function isGet()
+    public function isGet(): bool
     {
         return 'GET' === $this->getMethod() || 'HEAD' === $this->getMethod();
     }
 
-    /**
-     * @return bool
-     */
-    public function isPost()
+    public function isPost(): bool
     {
         return 'POST' === $this->getMethod();
     }
 
-    /**
-     * @return bool
-     */
-    public function isPut()
+    public function isPut(): bool
     {
         return 'PUT' === $this->getMethod();
     }
 
-    /**
-     * @return bool
-     */
-    public function isDelete()
+    public function isDelete(): bool
     {
         return 'DELETE' === $this->getMethod();
     }
 
-    /**
-     * @return bool
-     */
-    public function isAjax()
+    public function isAjax(): bool
     {
         $val = $this->getHeader('x-requested-with');
 
@@ -505,6 +483,10 @@ class Request implements ServerRequestInterface
      *         ...
      *     ],
      * ]);
+     *
+     * @param array $options
+     *
+     * @return self
      */
     public static function factory(array $options = [])
     {
@@ -548,7 +530,7 @@ class Request implements ServerRequestInterface
         return new self($get, $post, $server, $cookies);
     }
 
-    private static function normailizeUploadedFiles($files)
+    private static function normalizeUploadedFiles($files): array
     {
         $result = [];
 
@@ -580,7 +562,7 @@ class Request implements ServerRequestInterface
     /**
      * @deprecated
      */
-    public function getRequestPath()
+    public function getRequestPath(): string
     {
         return $this->getUri()->getPath();
     }
