@@ -7,6 +7,9 @@
         <testsuite name="MVC">
             <directory suffix="Test.php">./tests/MVC</directory>
         </testsuite>
+        <testsuite name="ORM">
+            <directory suffix="Test.php">./tests/ORM</directory>
+        </testsuite>
         <testsuite name="Service">
             <directory suffix="Test.php">./tests/Service</directory>
         </testsuite>
