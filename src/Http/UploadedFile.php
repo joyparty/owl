@@ -1,7 +1,10 @@
 <?php
+
 namespace Owl\Http;
 
-class UploadedFile implements \Psr\Http\Message\UploadedFileInterface
+use Psr\Http\Message\UploadedFileInterface;
+
+class UploadedFile implements UploadedFileInterface
 {
     protected $moved;
     protected $file;
@@ -15,15 +18,21 @@ class UploadedFile implements \Psr\Http\Message\UploadedFileInterface
         $this->file = $file;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getStream()
     {
         if ($this->moved) {
             throw new \RuntimeException('File was moved to other directory');
         }
 
-        return new \Owl\Http\ResourceStream(fopen($this->file['tmp_name'], 'r'));
+        return new ResourceStream(fopen($this->file['tmp_name'], 'r'));
     }
 
+    /**
+     * @inheritDoc
+     */
     public function moveTo($targetPath)
     {
         if ($this->moved) {
@@ -44,11 +53,17 @@ class UploadedFile implements \Psr\Http\Message\UploadedFileInterface
         return $target;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getSize()
     {
         return isset($this->file['size']) ? $this->file['size'] : null;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getError()
     {
         return $this->file['error'];
@@ -63,14 +78,20 @@ class UploadedFile implements \Psr\Http\Message\UploadedFileInterface
         return $this->file['tmp_name'] ?? '';
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getClientFilename()
     {
-        return isset($this->file['name']) ? $this->file['name'] : null;
+        return $this->file['name'] ?? null;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getClientMediaType()
     {
-        return isset($this->file['type']) ? $this->file['type'] : null;
+        return $this->file['type'] ?? null;
     }
 
     public function isError()
