@@ -2,6 +2,9 @@
 
 namespace Owl\Http;
 
+use Exception;
+use Iterator;
+
 /**
  * @example
  * $output = function() use ($select) {
@@ -14,7 +17,7 @@ namespace Owl\Http;
  * $body = new \Owl\Http\IteratorStream($output());
  * $response->withBody($body);
  */
-class IteratorStream extends \Owl\Http\Stream
+class IteratorStream extends Stream
 {
     protected $position = 0;
     protected $seekable = false;
@@ -23,8 +26,8 @@ class IteratorStream extends \Owl\Http\Stream
 
     public function __construct($iterator)
     {
-        if (!($iterator instanceof \Iterator)) {
-            throw new \Exception('Stream must be a Iterator object');
+        if (!($iterator instanceof Iterator)) {
+            throw new Exception('Stream must be a Iterator object');
         }
 
         $this->stream = $iterator;
@@ -34,7 +37,7 @@ class IteratorStream extends \Owl\Http\Stream
     {
         try {
             return $this->getContents();
-        } catch (\Exception $ex) {
+        } catch (Exception $ex) {
             return '';
         }
     }
@@ -42,7 +45,7 @@ class IteratorStream extends \Owl\Http\Stream
     public function iterator()
     {
         if ($this->eof()) {
-            throw new \Exception('Stream was closed');
+            throw new Exception('Stream was closed');
         }
 
         foreach ($this->stream as $result) {
