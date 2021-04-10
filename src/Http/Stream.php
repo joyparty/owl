@@ -2,7 +2,9 @@
 
 namespace Owl\Http;
 
-abstract class Stream implements \Psr\Http\Message\StreamInterface
+use Psr\Http\Message\StreamInterface;
+
+abstract class Stream implements StreamInterface
 {
     protected $stream;
     protected $seekable = false;
@@ -14,15 +16,21 @@ abstract class Stream implements \Psr\Http\Message\StreamInterface
         $this->close();
     }
 
+    /**
+     * @inheritDoc
+     */
     public function close()
     {
         $this->detach();
     }
 
+    /**
+     * @inheritDoc
+     */
     public function detach()
     {
         if (!$this->stream) {
-            return;
+            return null;
         }
 
         $stream = $this->stream;
@@ -33,26 +41,41 @@ abstract class Stream implements \Psr\Http\Message\StreamInterface
         return $stream;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function isSeekable()
     {
         return $this->seekable;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function isReadable()
     {
         return $this->readable;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function isWritable()
     {
         return $this->writable;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getSize()
     {
-        return;
+        return null;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function seek($offset, $whence = SEEK_SET)
     {
         if (!$this->seekable) {
@@ -60,11 +83,17 @@ abstract class Stream implements \Psr\Http\Message\StreamInterface
         }
     }
 
+    /**
+     * @inheritDoc
+     */
     public function rewind()
     {
         $this->seek(0);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function write($string)
     {
         if (!$this->writable) {
@@ -72,6 +101,9 @@ abstract class Stream implements \Psr\Http\Message\StreamInterface
         }
     }
 
+    /**
+     * @inheritDoc
+     */
     public function read($length)
     {
         if (!$this->readable) {
@@ -79,6 +111,9 @@ abstract class Stream implements \Psr\Http\Message\StreamInterface
         }
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getMetaData($key = null)
     {
         return $key === null ? [] : null;
