@@ -2,9 +2,11 @@
 
 namespace Owl\Http;
 
-class Response implements \Psr\Http\Message\ResponseInterface
+use Psr\Http\Message\ResponseInterface;
+
+class Response implements ResponseInterface
 {
-    use \Owl\Http\MessageTrait;
+    use MessageTrait;
 
     protected $code = 200;
 
@@ -31,9 +33,7 @@ class Response implements \Psr\Http\Message\ResponseInterface
     }
 
     /**
-     * {@inheritdoc}
-     *
-     * @return int
+     * @inheritDoc
      */
     public function getStatusCode()
     {
@@ -41,10 +41,7 @@ class Response implements \Psr\Http\Message\ResponseInterface
     }
 
     /**
-     * {@inheritdoc}
-     *
-     * @param int    $code
-     * @param string $reasonPhrase
+     * @inheritDoc
      *
      * @return self
      */
@@ -57,9 +54,7 @@ class Response implements \Psr\Http\Message\ResponseInterface
     }
 
     /**
-     * {@inheritdoc}
-     *
-     * @return string
+     * @inheritDoc
      */
     public function getReasonPhrase()
     {
@@ -102,8 +97,8 @@ class Response implements \Psr\Http\Message\ResponseInterface
     }
 
     /**
-     * @param \Owl\Http\Uri | string $url
-     * @param int                    $status
+     * @param Uri|string $url
+     * @param int $status
      *
      * @return self
      */
@@ -175,7 +170,7 @@ class Response implements \Psr\Http\Message\ResponseInterface
         $body = $this->getBody();
         if (204 === $code || 304 === $code) {
             echo '';
-        } elseif ($body instanceof \Owl\Http\IteratorStream) {
+        } elseif ($body instanceof IteratorStream) {
             foreach ($body->iterator() as $string) {
                 echo $string;
             }
