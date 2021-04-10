@@ -84,6 +84,8 @@ trait MessageTrait
 
     /**
      * @inheritDoc
+     *
+     * @return static
      */
     public function withHeader($name, $value)
     {
