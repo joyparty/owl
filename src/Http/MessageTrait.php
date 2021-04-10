@@ -15,15 +15,21 @@ trait MessageTrait
     protected $attributes = [];
 
     /**
-     * @var \Psr\Http\Message\StreamInterface
+     * @var StreamInterface
      */
     protected $body;
 
+    /**
+     * @inheritDoc
+     */
     public function getProtocolVersion()
     {
         return $this->protocol_version;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function withProtocolVersion($version)
     {
         $result = $this->immutability ? clone $this : $this;
@@ -32,11 +38,17 @@ trait MessageTrait
         return $result;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getHeaders()
     {
         return $this->headers;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function hasHeader($name)
     {
         $name = strtolower($name);
@@ -44,6 +56,9 @@ trait MessageTrait
         return array_key_exists($name, $this->headers);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getHeader($name)
     {
         $name = strtolower($name);
@@ -57,6 +72,9 @@ trait MessageTrait
         return is_array($value) ? $value : [$value];
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getHeaderLine($name)
     {
         $value = $this->getHeader($name);
@@ -64,6 +82,9 @@ trait MessageTrait
         return $value ? implode(',', $value) : '';
     }
 
+    /**
+     * @inheritDoc
+     */
     public function withHeader($name, $value)
     {
         $result = $this->immutability ? clone $this : $this;
@@ -74,6 +95,9 @@ trait MessageTrait
         return $result;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function withAddedHeader($name, $value)
     {
         if ($values = $this->getHeader($name)) {
@@ -85,6 +109,9 @@ trait MessageTrait
         return $this->withHeader($name, $values);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function withoutHeader($name)
     {
         if (!$this->hasHeader($name)) {
@@ -99,11 +126,17 @@ trait MessageTrait
         return $result;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getBody()
     {
         return $this->body;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function withBody(StreamInterface $body)
     {
         if ($body === $this->body) {
@@ -116,11 +149,17 @@ trait MessageTrait
         return $result;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getAttributes()
     {
         return $this->attributes;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getAttribute($name, $default = null)
     {
         return isset($this->attributes[$name])
@@ -128,6 +167,9 @@ trait MessageTrait
              : $default;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function withAttribute($name, $value)
     {
         $this->attributes[$name] = $value;
@@ -135,6 +177,9 @@ trait MessageTrait
         return $this;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function withoutAttribute($name)
     {
         unset($this->attributes[$name]);
