@@ -2,7 +2,7 @@
 
 namespace Owl\Http;
 
-class ResourceStream extends \Owl\Http\Stream
+class ResourceStream extends Stream
 {
     private static $read_write_mode = [
         'read' => [
@@ -38,6 +38,9 @@ class ResourceStream extends \Owl\Http\Stream
         $this->close();
     }
 
+    /**
+     * @inheritDoc
+     */
     public function __toString()
     {
         try {
@@ -51,6 +54,9 @@ class ResourceStream extends \Owl\Http\Stream
         }
     }
 
+    /**
+     * @inheritDoc
+     */
     public function close()
     {
         if ($this->stream && is_resource($this->stream)) {
@@ -60,10 +66,13 @@ class ResourceStream extends \Owl\Http\Stream
         parent::close();
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getSize()
     {
         if (!$this->stream) {
-            return;
+            return null;
         }
 
         $stat = fstat($this->stream);
@@ -71,6 +80,9 @@ class ResourceStream extends \Owl\Http\Stream
         return isset($stat['size']) ? (int) $stat['size'] : null;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function tell()
     {
         $position = ftell($this->stream);
@@ -82,11 +94,17 @@ class ResourceStream extends \Owl\Http\Stream
         return $position;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function eof()
     {
         return !$this->stream || feof($this->stream);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function seek($offset, $whence = SEEK_SET)
     {
         parent::seek($offset, $whence);
@@ -96,6 +114,9 @@ class ResourceStream extends \Owl\Http\Stream
         }
     }
 
+    /**
+     * @inheritDoc
+     */
     public function write($string)
     {
         parent::write($string);
@@ -116,6 +137,9 @@ class ResourceStream extends \Owl\Http\Stream
         return fread($this->stream, $length);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getContents()
     {
         $contents = stream_get_contents($this->stream);
@@ -127,6 +151,9 @@ class ResourceStream extends \Owl\Http\Stream
         return $contents;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getMetadata($key = null)
     {
         $meta = stream_get_meta_data($this->stream);
@@ -135,6 +162,6 @@ class ResourceStream extends \Owl\Http\Stream
             return $key;
         }
 
-        return isset($meta[$key]) ? $meta[$key] : null;
+        return $meta[$key] ?? null;
     }
 }
