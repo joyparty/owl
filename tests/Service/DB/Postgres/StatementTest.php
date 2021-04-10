@@ -2,14 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Tests\Service\DB;
+namespace Tests\Service\DB\Postgres;
 
 use Owl\Service\DB\Expr;
 use Owl\Service\DB\Select;
 use PHPUnit\Framework\TestCase;
 
-class SelectTest extends TestCase
+class StatementTest extends TestCase
 {
+
     public function testStandard()
     {
         $select = $this->select('mytable');
@@ -105,54 +106,6 @@ class SelectTest extends TestCase
         list($sql, $params) = $select->compile();
 
         $this->assertEquals('SELECT * FROM "mytable" WHERE ("id" IN (select id from other))', $sql);
-    }
-
-    public function testUpdateWithoutWhere()
-    {
-        $this->expectException(\LogicException::class);
-        $this->select('mytable')->update(['name' => 'yangyi']);
-    }
-
-    public function testUpdateWithLimit()
-    {
-        $this->expectException(\LogicException::class);
-        $this->select('mytable')->where('id = 1')->limit(10)->update(['name' => 'yangyi']);
-    }
-
-    public function testUpdateWithOffset()
-    {
-        $this->expectException(\LogicException::class);
-        $this->select('mytable')->where('id = 1')->offset(10)->update(['name' => 'yangyi']);
-    }
-
-    public function testUpdateWithGroupBy()
-    {
-        $this->expectException(\LogicException::class);
-        $this->select('mytable')->where('id = 1')->groupBy('email')->update(['name' => 'yangyi']);
-    }
-
-    public function testDeleteWithoutWhere()
-    {
-        $this->expectException(\LogicException::class);
-        $this->select('mytable')->delete();
-    }
-
-    public function testDeleteWithLimit()
-    {
-        $this->expectException(\LogicException::class);
-        $this->select('mytable')->where('id = 1')->limit(10)->delete();
-    }
-
-    public function testDeleteWithOffset()
-    {
-        $this->expectException(\LogicException::class);
-        $this->select('mytable')->where('id = 1')->offset(10)->delete();
-    }
-
-    public function testDeleteWithGroupBy()
-    {
-        $this->expectException(\LogicException::class);
-        $this->select('mytable')->where('id = 1')->groupBy('email')->delete();
     }
 
     protected function select($table): Select
