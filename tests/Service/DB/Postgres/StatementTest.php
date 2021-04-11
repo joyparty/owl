@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Service\DB\Postgres;
 
 use Owl\Service\DB\Expr;
+use Owl\Service\DB\Pgsql\Adapter;
 use Owl\Service\DB\Select;
 use PHPUnit\Framework\TestCase;
 
@@ -93,26 +94,11 @@ class StatementTest extends TestCase
 
         $this->assertEquals('SELECT * FROM "mytable" WHERE (email = ? and passwd = ?)', $sql);
         $this->assertEquals(['yangyi.cn.gz@gmail.com', 'abc'], $params);
-
-        //////////////////////////////
-        $select = $this->select('mytable');
-        $select->whereIn('id', [1, 2, 3]);
-        list($sql, $params) = $select->compile();
-
-        $this->assertEquals('SELECT * FROM "mytable" WHERE ("id" IN (1,2,3))', $sql);
-
-        $select = $this->select('mytable');
-        $select->whereIn('id', new Expr('select id from other'));
-        list($sql, $params) = $select->compile();
-
-        $this->assertEquals('SELECT * FROM "mytable" WHERE ("id" IN (select id from other))', $sql);
     }
 
     protected function select($table): Select
     {
-        $adapter = new \Owl\Service\DB\Pgsql\Adapter([
-            'dsn' => $_ENV['DSN'],
-        ]);
+        $adapter = new Adapter(['dsn' => '']);
 
         return $adapter->select($table);
     }
