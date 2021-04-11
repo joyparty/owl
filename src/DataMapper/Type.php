@@ -2,8 +2,21 @@
 
 namespace Owl\DataMapper;
 
+use Owl\DataMapper\Type\Common;
+use Owl\DataMapper\Type\Complex;
+use Owl\DataMapper\Type\Datetime;
+use Owl\DataMapper\Type\Integer;
+use Owl\DataMapper\Type\Json;
+use Owl\DataMapper\Type\Number;
+use Owl\DataMapper\Type\PgsqlArray;
+use Owl\DataMapper\Type\PgsqlHstore;
+use Owl\DataMapper\Type\Text;
+use Owl\DataMapper\Type\UUID;
+
 class Type
 {
+    private static $instance;
+
     /**
      * 数据类型helper实例缓存.
      *
@@ -56,9 +69,9 @@ class Type
      * @param string $type  数据类型名字
      * @param string $class helper类名
      *
-     * @return $this
+     * @return self
      */
-    public function register($type, $class)
+    public function register($type, $class): self
     {
         $type = strtolower($type);
         $this->type_classes[$type] = $class;
@@ -85,7 +98,7 @@ class Type
      *
      * @return array
      */
-    public static function normalizeAttribute(array $attribute)
+    public static function normalizeAttribute(array $attribute): array
     {
         $defaults = [
             // 是否允许为空
@@ -127,7 +140,7 @@ class Type
             'type' => null,
         ];
 
-        $type = isset($attribute['type']) ? $attribute['type'] : null;
+        $type = $attribute['type'] ?? null;
 
         if (isset($attribute['pattern'])) {
             $attribute['regexp'] = $attribute['pattern'];
@@ -156,22 +169,24 @@ class Type
         return $attribute;
     }
 
-    private static $instance;
-
     public static function getInstance()
     {
-        return self::$instance ?: (self::$instance = new self());
+        if (!self::$instance) {
+            self::$instance = new self();
+        }
+
+        return self::$instance;
     }
 }
 
 Type::getInstance()
-    ->register('common', '\Owl\DataMapper\Type\Common')
-    ->register('datetime', '\Owl\DataMapper\Type\Datetime')
-    ->register('integer', '\Owl\DataMapper\Type\Integer')
-    ->register('json', '\Owl\DataMapper\Type\Json')
-    ->register('number', '\Owl\DataMapper\Type\Number')
-    ->register('pg_array', '\Owl\DataMapper\Type\PgsqlArray')
-    ->register('pg_hstore', '\Owl\DataMapper\Type\PgsqlHstore')
-    ->register('string', '\Owl\DataMapper\Type\Text')
-    ->register('uuid', '\Owl\DataMapper\Type\UUID')
-    ->register('complex', '\Owl\DataMapper\Type\Complex');
+    ->register('common', Common::class)
+    ->register('datetime', Datetime::class)
+    ->register('integer', Integer::class)
+    ->register('json', Json::class)
+    ->register('number', Number::class)
+    ->register('pg_array', PgsqlArray::class)
+    ->register('pg_hstore', PgsqlHstore::class)
+    ->register('string', Text::class)
+    ->register('uuid', UUID::class)
+    ->register('complex', Complex::class);
