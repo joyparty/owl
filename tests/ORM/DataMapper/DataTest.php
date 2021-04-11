@@ -22,7 +22,7 @@ class DataTest extends TestCase
         $class::getMapper()->setAttributes($attributes);
     }
 
-    protected function newData(array $values = [], array $options = [])
+    protected function newData(array $values = [], array $options = []): Data
     {
         $class = $this->class;
 
@@ -310,20 +310,16 @@ class DataTest extends TestCase
         $data->setIn('doc', 'bar', 2);
         $this->assertSame(['foo' => 1, 'bar' => 2], $data->get('doc'));
 
-        try {
-            $data->setIn('msg', 'foo', 1);
-            $this->fail('test setIn failed');
-        } catch (UnexpectedPropertyValueException $ex) {
-        }
-
-        return $data;
+        $this->expectException(UnexpectedPropertyValueException::class);
+        $data->setIn('msg', 'foo', 1);
     }
 
-    /**
-     * @depends testSetIn
-     */
-    public function testGetIn($data)
+    public function testGetIn()
     {
+        $data = $this->newData(['id' => 1], ['fresh' => false]);
+        $data->setIn('doc', 'foo', 1);
+        $data->setIn('doc', 'bar', 2);
+
         $this->assertSame(1, $data->getIn('doc', 'foo'));
         $this->assertSame(2, $data->getIn('doc', 'bar'));
 
@@ -368,21 +364,22 @@ class DataTest extends TestCase
         try {
             $data->validate();
             $this->fail('validate "allow_null" falied');
-        } catch (UnexpectedPropertyValueException $ex) {
+        } catch (\Throwable $ex) {
+            $this->assertInstanceOf(UnexpectedPropertyValueException::class, $ex);
         }
 
         $data->foo = '';
         try {
             $data->validate();
-            $this->fail('validate "allow_null" falied');
-        } catch (UnexpectedPropertyValueException $ex) {
+        } catch (\Throwable $ex) {
+            $this->assertInstanceOf(UnexpectedPropertyValueException::class, $ex);
         }
 
         $data->foo = null;
         try {
             $data->validate();
-            $this->fail('validate "allow_null" falied');
-        } catch (UnexpectedPropertyValueException $ex) {
+        } catch (\Throwable $ex) {
+            $this->assertInstanceOf(UnexpectedPropertyValueException::class, $ex);
         }
 
         $data->foo = 'foo';
@@ -397,8 +394,8 @@ class DataTest extends TestCase
 
         try {
             $data->validate();
-            $this->fail('validate "allow_null" falied');
-        } catch (UnexpectedPropertyValueException $ex) {
+        } catch (\Throwable $ex) {
+            $this->assertInstanceOf(UnexpectedPropertyValueException::class, $ex);
         }
     }
 
@@ -414,8 +411,8 @@ class DataTest extends TestCase
 
         try {
             $data->validate();
-            $this->fail('validate "regexp" failed');
-        } catch (UnexpectedPropertyValueException $ex) {
+        } catch (\Throwable $ex) {
+            $this->assertInstanceOf(UnexpectedPropertyValueException::class, $ex);
         }
 
         $data->foo = 'abz';
@@ -449,8 +446,8 @@ class DataTest extends TestCase
         $data->setIn('doc', 'b', 1);
         try {
             $data->validate();
-            $this->fail('validate complex failed');
-        } catch (UnexpectedPropertyValueException $ex) {
+        } catch (\Throwable $ex) {
+            $this->assertInstanceOf(UnexpectedPropertyValueException::class, $ex);
         }
 
         $data->setIn('doc', 'a', 1);
@@ -461,8 +458,8 @@ class DataTest extends TestCase
         $data->setIn('doc', ['c', 'd'], 'baz');
         try {
             $data->validate();
-            $this->fail('validate complex type failed');
-        } catch (UnexpectedPropertyValueException $ex) {
+        } catch (\Throwable $ex) {
+            $this->assertInstanceOf(UnexpectedPropertyValueException::class, $ex);
         }
 
         $data->setIn('doc', ['c', 'd'], 'bar');
@@ -490,14 +487,14 @@ class DataTest extends TestCase
 
         try {
             $data->setBar(1);
-            $this->fail('set undefined property using setter');
-        } catch (\Owl\DataMapper\Exception\UndefinedPropertyException $ex) {
+        } catch (\Throwable $ex) {
+            $this->assertInstanceOf(UndefinedPropertyException::class, $ex);
         }
 
         try {
             $data->getBar();
-            $this->fail('get undefined property using setter');
-        } catch (\Owl\DataMapper\Exception\UndefinedPropertyException $ex) {
+        } catch (\Throwable $ex) {
+            $this->assertInstanceOf(UndefinedPropertyException::class, $ex);
         }
     }
 
