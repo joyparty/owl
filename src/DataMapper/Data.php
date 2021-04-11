@@ -1,4 +1,5 @@
 <?php
+
 namespace Owl\DataMapper;
 
 abstract class Data implements \JsonSerializable
@@ -8,7 +9,7 @@ abstract class Data implements \JsonSerializable
      *
      * @var string
      */
-    protected static $mapper = '\Owl\DataMapper\Mapper';
+    protected static $mapper = Mapper::class;
 
     /**
      * Mapper配置信息.
@@ -178,6 +179,8 @@ abstract class Data implements \JsonSerializable
      *
      * @param string $method
      * @param array  $args
+     *
+     * @return mixed
      */
     public function __call($method, array $args)
     {
@@ -273,7 +276,7 @@ abstract class Data implements \JsonSerializable
     }
 
     /**
-     * 修改属性值
+     * 修改属性值.
      *
      * @param string $key   属性名
      * @param mixed  $value 属性值
@@ -281,7 +284,7 @@ abstract class Data implements \JsonSerializable
      * @param bool [$options:force=false] 强制修改，忽略refuse_update设置
      * @param bool [$options:strict=true] 严格模式，出现错误会抛出异常，属性如果被标记为"strict"，就只能在严格模式下才能修改
      *
-     * @return $this
+     * @return self
      *
      * @throws \Owl\DataMapper\Exception\UndefinedPropertyException       如果属性未定义
      * @throws \Owl\DataMapper\Exception\UnexpectedPropertyValueException 把null赋值给一个不允许为null的属性
@@ -322,9 +325,9 @@ abstract class Data implements \JsonSerializable
      * 把数据合并到Data实例
      * 不允许修改或者不存在的字段会被自动忽略.
      *
-     * @param array $value
+     * @param array $values
      *
-     * @return $this
+     * @return self
      */
     public function merge(array $values)
     {
@@ -368,7 +371,7 @@ abstract class Data implements \JsonSerializable
      * @param mixed        $value
      * @param bool         $push
      *
-     * @return $this
+     * @return self
      */
     public function setIn($key, $path, $value, $push = false)
     {
@@ -392,7 +395,7 @@ abstract class Data implements \JsonSerializable
      * @param array|string $path
      * @param mixed        $value
      *
-     * @return $this
+     * @return self
      */
     public function pushIn($key, $path, $value)
     {
@@ -403,7 +406,7 @@ abstract class Data implements \JsonSerializable
      * @param string       $key
      * @param array|string $path
      *
-     * @return $this
+     * @return self
      */
     public function unsetIn($key, $path)
     {
@@ -570,7 +573,7 @@ abstract class Data implements \JsonSerializable
      * 从存储服务内重新获取数据
      * 抛弃所有尚未被保存过的修改.
      *
-     * @return $this
+     * @return static
      */
     public function refresh()
     {
@@ -603,7 +606,7 @@ abstract class Data implements \JsonSerializable
      * "fresh"对象会检查所有值
      * 非"fresh"对象只检查修改过的值
      *
-     * @return true
+     * @return bool
      *
      * @throws \Owl\DataMapper\Exception\UnexpectedPropertyValueException
      */
@@ -749,11 +752,12 @@ abstract class Data implements \JsonSerializable
      */
     public static function findOrFail($id)
     {
-        if ($data = static::find($id)) {
-            return $data;
+        $data = static::find($id);
+        if (!$data) {
+            throw new \Owl\DataMapper\Exception\DataNotFoundException();
         }
 
-        throw new \Owl\DataMapper\Exception\DataNotFoundException();
+        return $data;
     }
 
     /**
@@ -789,14 +793,13 @@ abstract class Data implements \JsonSerializable
     /**
      * 获得当前Data class的配置信息.
      *
-     * @return
-     * array(
+     * @return array [
      *     'service' => (string),
      *     'collection' => (string),
      *     'attributes' => (array),
      *     'readonly' => (boolean),
      *     'strict' => (boolean),
-     * )
+     * ]
      */
     final public static function getOptions()
     {
