@@ -2,6 +2,13 @@
 
 namespace Owl\DataMapper;
 
+use Owl\DataMapper\Exception\DeprecatedPropertyException;
+use Owl\DataMapper\Exception\DataNotFoundException;
+use Owl\DataMapper\Exception\PropertyException;
+use Owl\DataMapper\Exception\RefuseUpdatePropertyException;
+use Owl\DataMapper\Exception\UndefinedPropertyException;
+use Owl\DataMapper\Exception\UnexpectedPropertyValueException;
+
 abstract class Data implements \JsonSerializable
 {
     /**
@@ -86,6 +93,8 @@ abstract class Data implements \JsonSerializable
     /**
      * @param array [$values]
      * @param array [$options]
+     *
+     * @throws
      */
     public function __construct(array $values = null, array $options = null)
     {
@@ -128,6 +137,7 @@ abstract class Data implements \JsonSerializable
      * @param string $key
      *
      * @return mixed
+     * @throws
      */
     public function __get($key)
     {
@@ -140,7 +150,9 @@ abstract class Data implements \JsonSerializable
      * @magic
      *
      * @param string $key
-     *                    $param mixed $value
+     * @param mixed $value
+     *
+     * @throws
      */
     public function __set($key, $value)
     {
@@ -181,6 +193,7 @@ abstract class Data implements \JsonSerializable
      * @param array  $args
      *
      * @return mixed
+     * @throws
      */
     public function __call($method, array $args)
     {
@@ -203,7 +216,7 @@ abstract class Data implements \JsonSerializable
             }
 
             if (!$found) {
-                throw new Exception\UndefinedPropertyException(get_class($this) . ": Undefined property {$key}");
+                throw new UndefinedPropertyException(get_class($this) . ": Undefined property {$key}");
             }
         }
 
@@ -286,11 +299,12 @@ abstract class Data implements \JsonSerializable
      *
      * @return self
      *
-     * @throws \Owl\DataMapper\Exception\UndefinedPropertyException       如果属性未定义
-     * @throws \Owl\DataMapper\Exception\UnexpectedPropertyValueException 把null赋值给一个不允许为null的属性
-     * @throws \Owl\DataMapper\Exception\UnexpectedPropertyValueException 值没有通过设定的正则表达式检查
-     * @throws \Owl\DataMapper\Exception\DeprecatedPropertyException      属性被标记为“废弃”
-     * @throws \Owl\DataMapper\Exception\RefuseUpdatePropertyException    属性不允许更新修改
+     * @throws DeprecatedPropertyException      属性被标记为“废弃”
+     * @throws RefuseUpdatePropertyException    属性不允许更新修改
+     * @throws UndefinedPropertyException       如果属性未定义
+     * @throws PropertyException
+     * @throws UnexpectedPropertyValueException 1. 把null赋值给一个不允许为null的属性
+     *                                          2. 值没有通过设定的正则表达式检查
      */
     public function set($key, $value, array $options = null)
     {
@@ -299,7 +313,7 @@ abstract class Data implements \JsonSerializable
 
         try {
             $attribute = $this->prepareSet($key, $options['force']);
-        } catch (Exception\PropertyException $ex) {
+        } catch (PropertyException $ex) {
             if ($options['strict']) {
                 throw $ex;
             }
@@ -328,6 +342,7 @@ abstract class Data implements \JsonSerializable
      * @param array $values
      *
      * @return self
+     * @throws
      */
     public function merge(array $values)
     {
@@ -345,8 +360,8 @@ abstract class Data implements \JsonSerializable
      *
      * @return mixed
      *
-     * @throws \Owl\DataMapper\Exception\UndefinedPropertyException  如果属性未定义
-     * @throws \Owl\DataMapper\Exception\DeprecatedPropertyException 属性被标记为“废弃”
+     * @throws UndefinedPropertyException  如果属性未定义
+     * @throws DeprecatedPropertyException 属性被标记为“废弃”
      */
     public function get($key)
     {
@@ -381,7 +396,7 @@ abstract class Data implements \JsonSerializable
         $path = (array) $path;
 
         if (!is_array($target)) {
-            throw new Exception\UnexpectedPropertyValueException(get_class($this) . ": Property {$key} is not complex type");
+            throw new UnexpectedPropertyValueException(get_class($this) . ": Property {$key} is not complex type");
         }
 
         \Owl\array_set_in($target, $path, $value, $push);
@@ -416,7 +431,7 @@ abstract class Data implements \JsonSerializable
         $path = (array) $path;
 
         if (!is_array($target)) {
-            throw new Exception\UnexpectedPropertyValueException(get_class($this) . ": Property {$key} is not complex type");
+            throw new UnexpectedPropertyValueException(get_class($this) . ": Property {$key} is not complex type");
         }
 
         \Owl\array_unset_in($target, $path);
@@ -430,6 +445,7 @@ abstract class Data implements \JsonSerializable
      * @param array|string $path
      *
      * @return mixed|false
+     * @throws
      */
     public function getIn($key, $path)
     {
@@ -447,16 +463,17 @@ abstract class Data implements \JsonSerializable
      * 获得所有的或指定的属性值，以数组格式返回
      * 自动忽略无效的属性值以及尚未赋值的属性.
      *
+     * @example
+     * <code>
+     *  $data->pick();
+     *  $data->pick('foo', 'bar');
+     *  $data->pick(array('foo', 'bar'));
+     * </code>
+     *
      * @param mixed... $keys
      *
      * @return mixed[]
-     *
-     * @example
-     * <code>
-     * $data->pick();
-     * $data->pick('foo', 'bar');
-     * $data->pick(array('foo', 'bar'));
-     * </code>
+     * @throws
      */
     public function pick($keys = null)
     {
@@ -594,6 +611,7 @@ abstract class Data implements \JsonSerializable
      * 从存储服务内删除本条数据.
      *
      * @return bool
+     * @throws
      */
     public function destroy()
     {
@@ -607,10 +625,9 @@ abstract class Data implements \JsonSerializable
      * 非"fresh"对象只检查修改过的值
      *
      * @return bool
-     *
-     * @throws \Owl\DataMapper\Exception\UnexpectedPropertyValueException
+     * @throws
      */
-    public function validate()
+    public function validate(): bool
     {
         $attributes = static::getMapper()->getAttributes();
         $keys = $this->isFresh() ? array_keys($attributes) : array_keys($this->dirty);
@@ -627,22 +644,22 @@ abstract class Data implements \JsonSerializable
 
             if ($type->isNull($value)) {
                 if (!$attribute['allow_null']) {
-                    throw new Exception\UnexpectedPropertyValueException(sprintf('%s: Property "%s", not allow null', get_class($this), $key));
+                    throw new UnexpectedPropertyValueException(sprintf('%s: Property "%s", not allow null', get_class($this), $key));
                 }
             } else {
                 if ($attribute['regexp'] && !preg_match($attribute['regexp'], $value)) {
-                    throw new Exception\UnexpectedPropertyValueException(sprintf('%s: Property "%s", mismatching pattern %s', get_class($this), $key, $attribute['regexp']));
+                    throw new UnexpectedPropertyValueException(sprintf('%s: Property "%s", mismatching pattern %s', get_class($this), $key, $attribute['regexp']));
                 }
 
                 if (!$attribute['allow_tags'] && is_string($value) && \Owl\str_has_tags($value)) {
-                    throw new Exception\UnexpectedPropertyValueException(sprintf('%s: Property "%s", cannot contain tags', get_class($this), $key));
+                    throw new UnexpectedPropertyValueException(sprintf('%s: Property "%s", cannot contain tags', get_class($this), $key));
                 }
 
                 try {
                     $type->validateValue($value, $attribute);
                 } catch (\Throwable $ex) {
                     $message = sprintf('%s: Property "%s", %s', get_class($this), $key, $ex->getMessage());
-                    throw new Exception\UnexpectedPropertyValueException($message, 0, $ex);
+                    throw new UnexpectedPropertyValueException($message, 0, $ex);
                 }
             }
         }
@@ -667,19 +684,23 @@ abstract class Data implements \JsonSerializable
 
     /**
      * @param string $key
+     * @param bool $force
      *
      * @return array
+     * @throws
      */
-    protected function prepareSet($key, $force = false)
+    protected function prepareSet($key, $force = false): array
     {
-        if (!$attribute = static::getMapper()->getAttribute($key)) {
-            throw new Exception\UndefinedPropertyException(get_class($this) . ": Undefined property {$key}");
+        $attribute = static::getMapper()->getAttribute($key);
+
+        if (!$attribute) {
+            throw new UndefinedPropertyException(get_class($this) . ": Undefined property {$key}");
         }
 
         if ($attribute['deprecated']) {
-            throw new Exception\DeprecatedPropertyException(get_class($this) . ": Property {$key} is deprecated");
+            throw new DeprecatedPropertyException(get_class($this) . ": Property {$key} is deprecated");
         } elseif (!$force && $attribute['refuse_update'] && !$this->isFresh()) {
-            throw new Exception\RefuseUpdatePropertyException(get_class($this) . ": Property {$key} refuse update");
+            throw new RefuseUpdatePropertyException(get_class($this) . ": Property {$key} refuse update");
         }
 
         return $attribute;
@@ -689,15 +710,18 @@ abstract class Data implements \JsonSerializable
      * @param string $key
      *
      * @return array
+     * @throws
      */
-    protected function prepareGet($key)
+    protected function prepareGet($key): array
     {
-        if (!$attribute = static::getMapper()->getAttribute($key)) {
-            throw new Exception\UndefinedPropertyException(get_class($this) . ": Undefined property {$key}");
+        $attribute = static::getMapper()->getAttribute($key);
+
+        if (!$attribute) {
+            throw new UndefinedPropertyException(get_class($this) . ": Undefined property {$key}");
         }
 
         if ($attribute['deprecated']) {
-            throw new Exception\DeprecatedPropertyException(get_class($this) . ": Property {$key} is deprecated");
+            throw new DeprecatedPropertyException(get_class($this) . ": Property {$key} is deprecated");
         }
 
         return $attribute;
@@ -747,14 +771,13 @@ abstract class Data implements \JsonSerializable
      * @param mixed $id
      *
      * @return static
-     *
-     * @throws Exception\DataNotFoundException
+     * @throws DataNotFoundException
      */
     public static function findOrFail($id)
     {
         $data = static::find($id);
         if (!$data) {
-            throw new \Owl\DataMapper\Exception\DataNotFoundException();
+            throw new DataNotFoundException();
         }
 
         return $data;
@@ -766,6 +789,7 @@ abstract class Data implements \JsonSerializable
      * @param mixed $id
      *
      * @return static
+     * @throws
      */
     public static function findOrCreate($id)
     {
@@ -801,7 +825,7 @@ abstract class Data implements \JsonSerializable
      *     'strict' => (boolean),
      * ]
      */
-    final public static function getOptions()
+    final public static function getOptions(): array
     {
         $options = static::$mapper_options;
         $options['attributes'] = static::$attributes;
