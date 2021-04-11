@@ -1,5 +1,9 @@
 <?php
+
 namespace Owl\DataMapper;
+
+use Owl\Service\Container;
+use Owl\Service;
 
 abstract class Mapper
 {
@@ -21,45 +25,45 @@ abstract class Mapper
      * 根据主键值返回查询到的单条记录.
      *
      * @param array $id 主键值
-     * @param Owl\Service [$service] 存储服务连接
+     * @param Service [$service] 存储服务连接
      * @param string [$collection] 存储集合名
      *
      * @return array 数据结果
      */
-    abstract protected function doFind(array $id, \Owl\Service $service = null, $collection = null);
+    abstract protected function doFind(array $id, Service $service = null, $collection = null);
 
     /**
-     * 插入数据到存储服务
+     * 插入数据到存储服务.
      *
      * @param Data $data Data实例
-     * @param Owl\Service [$service] 存储服务连接
+     * @param Service [$service] 存储服务连接
      * @param string [$collection] 存储集合名
      *
      * @return array 新的主键值
      */
-    abstract protected function doInsert(\Owl\DataMapper\Data $data, \Owl\Service $service = null, $collection = null);
+    abstract protected function doInsert(Data $data, Service $service = null, $collection = null);
 
     /**
-     * 更新数据到存储服务
+     * 更新数据到存储服务.
      *
      * @param Data $data Data实例
-     * @param Owl\Service [$service] 存储服务连接
+     * @param Service [$service] 存储服务连接
      * @param string [$collection] 存储集合名
      *
      * @return bool
      */
-    abstract protected function doUpdate(\Owl\DataMapper\Data $data, \Owl\Service $service = null, $collection = null);
+    abstract protected function doUpdate(Data $data, Service $service = null, $collection = null);
 
     /**
      * 从存储服务删除数据.
      *
      * @param Data $data Data实例
-     * @param Owl\Service [$service] 存储服务连接
+     * @param Service [$service] 存储服务连接
      * @param string [$collection] 存储集合名
      *
      * @return bool
      */
-    abstract protected function doDelete(\Owl\DataMapper\Data $data, \Owl\Service $service = null, $collection = null);
+    abstract protected function doDelete(Data $data, Service $service = null, $collection = null);
 
     /**
      * @param string $class
@@ -70,46 +74,46 @@ abstract class Mapper
         $this->options = array_merge($this->normalizeOptions($class::getOptions()), $this->options);
     }
 
-    protected function __beforeSave(\Owl\DataMapper\Data $data)
+    protected function __beforeSave(Data $data)
     {
     }
 
-    protected function __afterSave(\Owl\DataMapper\Data $data)
+    protected function __afterSave(Data $data)
     {
     }
 
-    protected function __beforeInsert(\Owl\DataMapper\Data $data)
+    protected function __beforeInsert(Data $data)
     {
     }
 
-    protected function __afterInsert(\Owl\DataMapper\Data $data)
+    protected function __afterInsert(Data $data)
     {
     }
 
-    protected function __beforeUpdate(\Owl\DataMapper\Data $data)
+    protected function __beforeUpdate(Data $data)
     {
     }
 
-    protected function __afterUpdate(\Owl\DataMapper\Data $data)
+    protected function __afterUpdate(Data $data)
     {
     }
 
-    protected function __beforeDelete(\Owl\DataMapper\Data $data)
+    protected function __beforeDelete(Data $data)
     {
     }
 
-    protected function __afterDelete(\Owl\DataMapper\Data $data)
+    protected function __afterDelete(Data $data)
     {
     }
 
-    final private function __before($event, \Owl\DataMapper\Data $data)
+    final private function __before($event, Data $data)
     {
         $event = ucfirst($event);
         call_user_func([$data, '__before' . $event]);
         call_user_func([$this, '__before' . $event], $data);
     }
 
-    final private function __after($event, \Owl\DataMapper\Data $data)
+    final private function __after($event, Data $data)
     {
         $event = ucfirst($event);
         call_user_func([$data, '__after' . $event]);
@@ -159,15 +163,14 @@ abstract class Mapper
     /**
      * 获得存储服务连接实例.
      *
-     * @return \Owl\Service
-     *
-     * @throws \RuntimeException Data class没有配置存储服务
+     * @return Service
+     * @throws
      */
     public function getService()
     {
         $service = $this->getOption('service');
 
-        return \Owl\Service\Container::getInstance()->get($service);
+        return Container::getInstance()->get($service);
     }
 
     /**
@@ -206,9 +209,7 @@ abstract class Mapper
      */
     public function getAttribute($key)
     {
-        return isset($this->options['attributes'][$key])
-        ? $this->options['attributes'][$key]
-        : false;
+        return $this->options['attributes'][$key] ?? false;
     }
 
     /**
