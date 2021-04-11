@@ -1,9 +1,12 @@
 <?php
+
 namespace Owl\DataMapper;
+
+use Owl\Traits\Singleton;
 
 class Registry
 {
-    use \Owl\Traits\Singleton;
+    use Singleton;
 
     /**
      * 是否开启DataMapper的Data注册表功能.
@@ -40,7 +43,7 @@ class Registry
      *
      * @return bool
      */
-    public function isEnabled()
+    public function isEnabled(): bool
     {
         return $this->enabled;
     }
@@ -49,8 +52,10 @@ class Registry
      * 把Data实例缓存起来.
      *
      * @param Data $data
+     *
+     * @return bool
      */
-    public function set(Data $data)
+    public function set(Data $data): bool
     {
         $class = get_class($data);
         if (!$this->isEnabled()) {
@@ -67,6 +72,8 @@ class Registry
 
         $key = self::key($class, $id);
         $this->members[$key] = $data;
+
+        return true;
     }
 
     /**
@@ -85,9 +92,7 @@ class Registry
 
         $key = self::key($class, $id);
 
-        return isset($this->members[$key])
-        ? $this->members[$key]
-        : false;
+        return $this->members[$key] ?? false;
     }
 
     /**
@@ -95,8 +100,10 @@ class Registry
      *
      * @param string $class
      * @param mixed  $id
+     *
+     * @return bool
      */
-    public function remove($class, array $id)
+    public function remove($class, array $id): bool
     {
         if (!$this->isEnabled()) {
             return false;
@@ -104,6 +111,8 @@ class Registry
 
         $key = self::key($class, $id);
         unset($this->members[$key]);
+
+        return true;
     }
 
     /**
