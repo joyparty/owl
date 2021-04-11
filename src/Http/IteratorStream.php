@@ -4,6 +4,7 @@ namespace Owl\Http;
 
 use Exception;
 use Iterator;
+use Throwable;
 
 /**
  * @example
@@ -37,7 +38,7 @@ class IteratorStream extends Stream
     {
         try {
             return $this->getContents();
-        } catch (Exception $ex) {
+        } catch (Throwable $ex) {
             return '';
         }
     }

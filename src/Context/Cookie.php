@@ -198,7 +198,7 @@ class Cookie extends BaseContext
 
             try {
                 return \Owl\safe_json_decode($string, true) ?: [];
-            } catch (\Exception $exception) {
+            } catch (\Throwable $exception) {
                 if (DEBUG) {
                     throw $exception;
                 }

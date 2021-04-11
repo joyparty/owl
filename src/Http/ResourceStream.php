@@ -49,7 +49,7 @@ class ResourceStream extends Stream
             }
 
             return $this->getContents();
-        } catch (\Exception $ex) {
+        } catch (\Throwable $ex) {
             return '';
         }
     }

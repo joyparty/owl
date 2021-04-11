@@ -72,7 +72,7 @@ class Predis extends Service
                     'parameters' => $parameters,
                     'options' => $options,
                 ]);
-            } catch (\Exception $exception) {
+            } catch (\Throwable $exception) {
                 Logger::log('error', 'redis connect failed', [
                     'error' => $exception->getMessage(),
                     'parameters' => $parameters,

@@ -2,12 +2,13 @@
 
 namespace Owl\Service\DB;
 
-use Exception;
+use InvalidArgumentException;
 use Owl\Logger;
 use Owl\Service;
 use Owl\Service\Exception as ServiceException;
 use PDO;
 use PDOStatement;
+use Throwable;
 
 /**
  * @mixin PDO
@@ -36,7 +37,7 @@ abstract class Adapter extends Service
     public function __construct(array $config = [])
     {
         if (!isset($config['dsn'])) {
-            throw new \InvalidArgumentException('Invalid database config, require "dsn" key.');
+            throw new InvalidArgumentException('Invalid database config, require "dsn" key.');
         }
         parent::__construct($config);
     }
@@ -89,7 +90,7 @@ abstract class Adapter extends Service
             $handler = new PDO($dsn, $user, $password, $options);
 
             Logger::log('debug', 'database connected', ['dsn' => $dsn]);
-        } catch (Exception $exception) {
+        } catch (Throwable $exception) {
             Logger::log('error', 'database connect failed', [
                 'error' => $exception->getMessage(),
                 'dsn' => $dsn,

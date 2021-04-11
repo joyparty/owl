@@ -640,7 +640,7 @@ abstract class Data implements \JsonSerializable
 
                 try {
                     $type->validateValue($value, $attribute);
-                } catch (\Exception $ex) {
+                } catch (\Throwable $ex) {
                     $message = sprintf('%s: Property "%s", %s', get_class($this), $key, $ex->getMessage());
                     throw new Exception\UnexpectedPropertyValueException($message, 0, $ex);
                 }
