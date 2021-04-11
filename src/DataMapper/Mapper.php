@@ -189,8 +189,7 @@ abstract class Mapper
     /**
      * 获得主键定义.
      *
-     * @return
-     * [
+     * @return array [
      *     (string),    // 主键字段名
      *     ...
      * ]
