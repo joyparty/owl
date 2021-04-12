@@ -2,6 +2,8 @@
 
 namespace Owl\DataMapper\Type;
 
+use Owl\Parameter\Validator;
+
 /**
  * @example
  * class Book extends \Owl\DataMapper\Data {
@@ -32,7 +34,7 @@ namespace Owl\DataMapper\Type;
  * $book->pushIn('doc', 'author', ['first_name' => 'F1', 'last_name' => 'L1']);
  * $book->pushIn('doc', 'author', ['first_name' => 'F2', 'last_name' => 'L2']);
  *
- * @see \Owl\Parameter\Validator
+ * @see Validator
  */
 class Complex extends Common
 {
@@ -63,7 +65,7 @@ class Complex extends Common
              : [];
     }
 
-    public function isNull($value)
+    public function isNull($value): bool
     {
         return $value === null || $value === '' || $value === [];
     }
@@ -73,7 +75,7 @@ class Complex extends Common
         if ($attribute['schema']) {
             $value = $this->trimValue($value, $attribute);
 
-            (new \Owl\Parameter\Validator())->execute($value, $attribute['schema']);
+            (new Validator())->execute($value, $attribute['schema']);
         }
     }
 

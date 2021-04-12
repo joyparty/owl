@@ -2,6 +2,8 @@
 
 namespace Owl\DataMapper\Type;
 
+use Owl\DataMapper\Data;
+
 class Common
 {
     /**
@@ -19,7 +21,7 @@ class Common
     /**
      * 格式化属性值
      *
-     * @see \Lysine\DataMapper\Data::set()
+     * @see Data::set()
      *
      * @param mixed $value
      * @param array $attribute
@@ -91,7 +93,7 @@ class Common
      *
      * @return bool
      */
-    public function isNull($value)
+    public function isNull($value): bool
     {
         return $value === null || $value === '';
     }
