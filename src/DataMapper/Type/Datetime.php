@@ -1,4 +1,5 @@
 <?php
+
 namespace Owl\DataMapper\Type;
 
 class Datetime extends Common
