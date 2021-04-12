@@ -2,12 +2,16 @@
 
 namespace Owl\DataMapper\DB;
 
-class Select extends \Owl\Service\DB\Select
+use Owl\Service\DB\Select as ServiceSelect;
+
+class Select extends ServiceSelect
 {
     /**
-     * @return \Owl\DataMapper\DB\Data[]
+     * @param int|null $limit
+     *
+     * @return Data[]
      */
-    public function get($limit = null)
+    public function get($limit = null): array
     {
         $result = [];
 
