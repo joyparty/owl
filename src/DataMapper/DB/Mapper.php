@@ -2,22 +2,33 @@
 
 namespace Owl\DataMapper\DB;
 
-class Mapper extends \Owl\DataMapper\Mapper
+use Owl\DataMapper\Data as BaseData;
+use Owl\DataMapper\Mapper as BaseMapper;
+use Owl\Service;
+use Owl\Service\DB\Adapter;
+use Owl\Service\DB\Expr;
+use Owl\Service\DB\Select as ServiceSelect;
+
+class Mapper extends BaseMapper
 {
     /**
-     * @return \Owl\DataMapper\DB\Select
+     * @param Service|null $service
+     * @param string|Expr|ServiceSelect|null $collection
+     *
+     * @return Select|ServiceSelect
      */
-    public function select(\Owl\Service $service = null, $collection = null)
+    public function select(Service $service = null, $collection = null)
     {
+        /** @var Adapter $service */
         $service = $service ?: $this->getService();
         $collection = $collection ?: $this->getCollection();
         $primary_key = $this->getPrimaryKey();
 
         // 只有一个主键，就可以返回以主键为key的数组结果
         if (1 === count($primary_key)) {
-            $select = new \Owl\DataMapper\DB\Select($service, $collection);
+            $select = new Select($service, $collection);
         } else {
-            $select = new \Owl\Service\DB\Select($service, $collection);
+            $select = new ServiceSelect($service, $collection);
         }
 
         $select->setColumns(array_keys($this->getAttributes()));
@@ -30,8 +41,9 @@ class Mapper extends \Owl\DataMapper\Mapper
         return $select;
     }
 
-    public function getBySQLAsIterator($sql, array $parameters = [], \Owl\Service $service = null)
+    public function getBySQLAsIterator($sql, array $parameters = [], Service $service = null)
     {
+        /** @var Adapter $service */
         $service = $service ?: $this->getService();
         $res = $service->execute($sql, $parameters);
 
@@ -40,7 +52,7 @@ class Mapper extends \Owl\DataMapper\Mapper
         }
     }
 
-    protected function doFind(array $id, \Owl\Service $service = null, $collection = null)
+    protected function doFind(array $id, Service $service = null, $collection = null)
     {
         $service = $service ?: $this->getService();
         $collection = $collection ?: $this->getCollection();
@@ -53,7 +65,7 @@ class Mapper extends \Owl\DataMapper\Mapper
         return $select->limit(1)->execute()->fetch();
     }
 
-    protected function doInsert(\Owl\DataMapper\Data $data, \Owl\Service $service = null, $collection = null)
+    protected function doInsert(BaseData $data, Service $service = null, $collection = null)
     {
         $service = $service ?: $this->getService();
         $collection = $collection ?: $this->getCollection();
@@ -76,7 +88,7 @@ class Mapper extends \Owl\DataMapper\Mapper
         return $id;
     }
 
-    protected function doUpdate(\Owl\DataMapper\Data $data, \Owl\Service $service = null, $collection = null)
+    protected function doUpdate(BaseData $data, Service $service = null, $collection = null)
     {
         $service = $service ?: $this->getService();
         $collection = $collection ?: $this->getCollection();
@@ -87,7 +99,7 @@ class Mapper extends \Owl\DataMapper\Mapper
         return $service->update($collection, $record, $where, $params);
     }
 
-    protected function doDelete(\Owl\DataMapper\Data $data, \Owl\Service $service = null, $collection = null)
+    protected function doDelete(BaseData $data, Service $service = null, $collection = null)
     {
         $service = $service ?: $this->getService();
         $collection = $collection ?: $this->getCollection();
@@ -97,7 +109,7 @@ class Mapper extends \Owl\DataMapper\Mapper
         return $service->delete($collection, $where, $params);
     }
 
-    protected function whereID(\Owl\Service $service, array $id)
+    protected function whereID(Service $service, array $id)
     {
         $where = $params = [];
         $primary_key = $this->getPrimaryKey();
