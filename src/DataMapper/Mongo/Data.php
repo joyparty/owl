@@ -1,12 +1,16 @@
 <?php
+
 namespace Owl\DataMapper\Mongo;
 
+use Owl\DataMapper\Data as BaseData;
+use Owl\DataMapper\Mongo\Mapper as MongoMapper;
+
 /**
- * @method static \Owl\DataMapper\Mongo\Mapper getMapper()
+ * @method static MongoMapper getMapper()
  */
-class Data extends \Owl\DataMapper\Data
+class Data extends BaseData
 {
-    protected static $mapper = '\Owl\DataMapper\Mongo\Mapper';
+    protected static $mapper = MongoMapper::class;
 
     public static function query($expr)
     {
