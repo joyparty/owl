@@ -38,7 +38,7 @@ class PgsqlHstore extends Complex
     public static function encode($array)
     {
         if (!$array) {
-            return;
+            return null;
         }
 
         if (!is_array($array)) {

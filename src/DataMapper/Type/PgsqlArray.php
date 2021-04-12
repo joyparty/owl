@@ -38,7 +38,7 @@ class PgsqlArray extends Complex
     public static function encode(array $array)
     {
         if (!$array) {
-            return;
+            return null;
         }
 
         if (!is_array($array)) {
