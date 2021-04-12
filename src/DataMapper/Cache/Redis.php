@@ -1,4 +1,5 @@
 <?php
+
 namespace Owl\DataMapper\Cache;
 
 trait Redis
