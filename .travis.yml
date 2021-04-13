@@ -7,8 +7,6 @@ jobs:
       after_success:
         - bash <(curl -s https://codecov.io/bash)
     - php: '7.1'
-      before_script:
-        - phpenv config-rm mcrypt.ini
     - php: '7.2'
     - php: '7.3'
     - php: '7.4'
