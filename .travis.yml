@@ -3,14 +3,16 @@ language: php
 jobs:
   include:
     - php: '7.0'
-      script: php ./vendor/bin/phpunit
+      script: php ./vendor/bin/phpunit --coverage-clover coverage.xml
       after_success:
         - bash <(curl -s https://codecov.io/bash)
     - php: '7.1'
+      before_script:
+        - phpenv config-rm mcrypt.ini
     - php: '7.2'
     - php: '7.3'
     - php: '7.4'
 
 install: composer install
 
-script: php ./vendor/bin/phpunit --coverage-clover coverage.xml
+script: php ./vendor/bin/phpunit
