@@ -1,16 +1,16 @@
 language: php
 
-php:
-  - '7.0'
-  - '7.1'
-  - '7.2'
-  - '7.3'
-  - '7.4'
-  - '8.0'
+jobs:
+  include:
+    - php: '7.0'
+      script: php ./vendor/bin/phpunit
+      after_success:
+        - bash <(curl -s https://codecov.io/bash)
+    - php: '7.1'
+    - php: '7.2'
+    - php: '7.3'
+    - php: '7.4'
 
 install: composer install
 
 script: php ./vendor/bin/phpunit --coverage-clover coverage.xml
-
-after_success:
-  - bash <(curl -s https://codecov.io/bash)
