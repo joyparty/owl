@@ -54,8 +54,8 @@ class CookieTest extends TestCase
 
     public function testCookieEncryptWithMcrypt()
     {
-        if (!extension_loaded('mcrypt')) {
-            $this->markTestSkipped('没有加载mcrypt模块，无法测试cookie mcrypt加密功能');
+        if (version_compare(PHP_VERSION, '7.1.0') >= 0 || !extension_loaded('mcrypt')) {
+            $this->markTestSkipped('php版本高于7.1, 或者没有加载mcrypt模块，无法测试cookie mcrypt加密功能');
         }
 
         $crypt = [
