@@ -10,6 +10,8 @@ jobs:
     - php: '7.2'
     - php: '7.3'
     - php: '7.4'
+    - php: '8.0'
+      install: composer install --ignore-platform-reqs
 
 install: composer install
 
