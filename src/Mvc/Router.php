@@ -100,7 +100,7 @@ class Router
      * @param string $key
      * @param mixed  $value
      *
-     * @return $this
+     * @return self
      */
     public function setConfig($key, $value)
     {
@@ -137,10 +137,10 @@ class Router
     /**
      * 给指定路径的请求绑定中间件.
      *
-     * @param string   $path
+     * @param string|callable $path
      * @param callable $handler
      *
-     * @return $this
+     * @return self
      */
     public function middleware($path, $handler = null)
     {
@@ -159,7 +159,7 @@ class Router
      * @param Request  $request
      * @param Response $response
      *
-     * @return $response
+     * @return Response
      * @throws
      */
     public function execute(Request $request, Response $response)
@@ -278,8 +278,8 @@ class Router
      * @param array  $rules
      *
      * @return array|false [
-     *      0: $class,
-     *      1: <array>
+     *      <string>,
+     *      <array>
      * ]
      */
     protected function byRewrite($path, array $rules = null)
@@ -311,8 +311,8 @@ class Router
      * @param string $path
      *
      * @return array [
-     *      0: $class,
-     *      1: <array>
+     *      <string>,
+     *      <array>
      * ]
      */
     protected function byPath($path)
