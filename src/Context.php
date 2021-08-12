@@ -2,9 +2,9 @@
 
 namespace Owl;
 
-use Owl\Context\Session;
-use Owl\Context\Cookie;
-use Owl\Context\Redis;
+use Owl\Context\Session as SessionContext;
+use Owl\Context\Cookie as CookieContext;
+use Owl\Context\Redis as RedisContext;
 use Owl\Parameter\Validator;
 use UnexpectedValueException;
 
@@ -61,15 +61,15 @@ abstract class Context
      * @param string $type
      * @param array $config
      *
-     * @return Cookie|Redis|Session
+     * @return CookieContext|RedisContext|SessionContext
      * @throws
      */
     public static function factory($type, array $config)
     {
         switch (strtolower($type)) {
-            case 'session': return new Session($config);
-            case 'cookie': return new Cookie($config);
-            case 'redis': return new Redis($config);
+            case 'session': return new SessionContext($config);
+            case 'cookie': return new CookieContext($config);
+            case 'redis': return new RedisContext($config);
             default:
                 throw new UnexpectedValueException('Unknown context handler type: ' . $type);
         }
