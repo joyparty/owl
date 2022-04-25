@@ -10,12 +10,29 @@ jobs:
     
     strategy:
       matrix:
-        php: [7.0, 7.1, 7.2, 7.3, 7.4, 8.0, 8.1]
+        os: [ubuntu-latest]
+        php-version: [7.0, 7.1, 7.2, 7.3, 7.4, 8.0, 8.1]
       
     runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v3
+
+    - if: ${{ matrix.php-version != '7.0' }}
+      name: Setup PHP-7.0
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ matrix.php-version }}
+        extensions: mcrypt
+
+    - if: ${{ matrix.php-version != '7.0' }}
+      name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ matrix.php-version }}
+
+    - name: Show PHP Info
+      run: php -v && php -r "foreach (get_loaded_extensions() as $each) echo $each.':' phpversion($each).PHP_EOL;"
 
     - name: Validate composer.json and composer.lock
       run: composer validate --strict
@@ -30,9 +47,6 @@ jobs:
         key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
         restore-keys: |
           ${{ runner.os }}-composer-
-
-    - name: Show PHP version
-      run: php -v
 
     - name: Install dependencies
       run: composer install --ignore-platform-reqs
