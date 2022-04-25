@@ -44,7 +44,7 @@ class Redis extends Service
         }
     }
 
-    public function __call($fn, array $args)
+    public function __call(string $fn, array $args)
     {
         return $args
              ? call_user_func_array([$this->connect(), $fn], $args)

@@ -13,7 +13,7 @@ use Tests\MVC\Mock\Http\Response as MockResponse;
 
 class CookieTest extends TestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         MockCookie::getInstance()->reset();
     }

@@ -54,7 +54,7 @@ abstract class Adapter extends Service
         $this->disconnect();
     }
 
-    public function __call($method, array $args)
+    public function __call(string $method, array $args)
     {
         return $args
         ? call_user_func_array([$this->connect(), $method], $args)

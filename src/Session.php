@@ -26,7 +26,7 @@ class Session implements ArrayAccess
         $this->snapshot = $this->data;
     }
 
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         $this->start();
 
@@ -34,20 +34,20 @@ class Session implements ArrayAccess
     }
 
     // 返回引用，否则会发生"Indirect modification of overloaded element of $class has no effect"错误
-    public function &offsetGet($offset)
+    public function &offsetGet($offset): mixed
     {
         $this->start();
 
         return $this->data[$offset];
     }
 
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
         $this->start();
         $this->data[$offset] = $value;
     }
 
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): void
     {
         $this->start();
         unset($this->data[$offset]);

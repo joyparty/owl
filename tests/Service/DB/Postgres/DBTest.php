@@ -14,7 +14,7 @@ class DBTest extends TestCase
     const TABLE = 'my_table';
     const TABLE_OTHER = 'other';
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         if (!isset($_ENV['PGSQL_DSN'])) {
             self::markTestSkipped();
@@ -40,7 +40,7 @@ class DBTest extends TestCase
         $db->execute("INSERT INTO {$other} (id) VALUES ('1'), ('2'), ('3');");
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         if (!isset($_ENV['PGSQL_DSN'])) {
             self::markTestSkipped();

@@ -86,13 +86,13 @@ class DataTest extends TestCase
         $new_data = clone $data;
 
         $this->assertFalse($data->id() === $new_data->id());
-        $this->assertRegexp('/^[0-9a-f\-]{36}$/', $new_data->id());
+        $this->assertMatchesRegularExpression('/^[0-9a-f\-]{36}$/', $new_data->id());
     }
 
     public function testBadConstruct()
     {
         $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessageRegExp('/primary key/');
+        $this->expectExceptionMessageMatches('/primary key/');
 
         $this->setAttributes([]);
     }
@@ -138,7 +138,7 @@ class DataTest extends TestCase
         $this->assertEquals('bar', $data->foo);
 
         $this->expectException(\Exception::class);
-        $this->expectExceptionMessageRegExp('/refuse update/');
+        $this->expectExceptionMessageMatches('/refuse update/');
         $data->foo = 'foo';
     }
 
@@ -264,7 +264,7 @@ class DataTest extends TestCase
     public function testDeprecatedPrimaryKey()
     {
         $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessageRegExp('/primary key/');
+        $this->expectExceptionMessageMatches('/primary key/');
 
         $this->setAttributes([
             'id' => ['type' => 'string', 'primary_key' => true, 'deprecated' => true],
@@ -516,7 +516,7 @@ class DataTest extends TestCase
 
         $data->foo = '<h1>test</h1>';
         $this->expectException(UnexpectedPropertyValueException::class);
-        $this->expectExceptionMessageRegExp('/cannot contain tags$/');
+        $this->expectExceptionMessageMatches('/cannot contain tags$/');
         $data->validate();
     }
 
@@ -549,7 +549,7 @@ class DataTest extends TestCase
 
         //////////////////////////////////////////////////////////////////////////////
         $this->expectException(PropertyException::class);
-        $this->expectExceptionMessageRegExp('/Illegal id/');
+        $this->expectExceptionMessageMatches('/Illegal id/');
         $class::findOrCreate('9f8e2ba8-fbb2-49d5-9f39-83af4fb52bf9');
     }
 }

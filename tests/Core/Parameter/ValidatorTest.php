@@ -495,7 +495,7 @@ class ValidatorTest extends TestCase
         );
     }
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->validator = new \Owl\Parameter\Validator();
     }

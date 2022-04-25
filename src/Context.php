@@ -66,12 +66,11 @@ abstract class Context
      */
     public static function factory($type, array $config)
     {
-        switch (strtolower($type)) {
-            case 'session': return new SessionContext($config);
-            case 'cookie': return new CookieContext($config);
-            case 'redis': return new RedisContext($config);
-            default:
-                throw new UnexpectedValueException('Unknown context handler type: ' . $type);
-        }
+        return match (strtolower($type ?? '')) {
+            'session' => new SessionContext($config),
+            'cookie' => new CookieContext($config),
+            'redis' => new RedisContext($config),
+            default => throw new UnexpectedValueException('Unknown context handler type: ' . $type),
+        };
     }
 }

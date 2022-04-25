@@ -64,7 +64,7 @@ class Cookie
 
     private function normalizePath($path)
     {
-        $path = trim(strtolower($path), '/');
+        $path = trim(strtolower(strval($path)), '/');
 
         return $path ? '/' . $path . '/' : '/';
     }

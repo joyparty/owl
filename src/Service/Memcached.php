@@ -29,7 +29,7 @@ class Memcached extends Service
 {
     protected $memcached;
 
-    public function __call($method, array $args)
+    public function __call(string $method, array $args)
     {
         $memcached = $this->connect();
 

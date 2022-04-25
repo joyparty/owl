@@ -39,7 +39,7 @@ class Predis extends Service
         'delete' => 'del',
     ];
 
-    public function __call($method, array $args)
+    public function __call(string $method, array $args)
     {
         $client = $this->connect();
 
