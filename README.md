@@ -1,4 +1,4 @@
 # Owl Framework
 
-[![Build Status](https://travis-ci.com/joyparty/owl.svg?branch=master)](https://travis-ci.com/joyparty/owl)
+![tests](https://github.com/joyparty/owl/actions/workflows/unit-tests.yml/badge.svg)
 [![codecov](https://codecov.io/gh/joyparty/owl/branch/master/graph/badge.svg?token=McVukQcf0R)](https://codecov.io/gh/joyparty/owl)
