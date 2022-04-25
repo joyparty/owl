@@ -32,7 +32,7 @@ jobs:
         php-version: ${{ matrix.php-version }}
 
     - name: Show PHP Info
-      run: php -v && php -r "foreach (get_loaded_extensions() as $each) echo $each.':' phpversion($each).PHP_EOL;"
+      run: php -v && php -r "foreach (get_loaded_extensions() as \$each) echo \$each.':' phpversion(\$each).PHP_EOL;"
 
     - name: Validate composer.json and composer.lock
       run: composer validate --strict
