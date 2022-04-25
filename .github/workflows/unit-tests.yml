@@ -7,6 +7,20 @@ on:
 jobs:
   UnitTest:
     name: Unit Tests
+
+    services:
+      postgres:
+        image: postgres
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_PASSWORD: postgres
+        # Set health checks to wait until postgres has started
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     
     strategy:
       matrix:
@@ -46,6 +60,11 @@ jobs:
       
     - name: Run Unit Tests
       run: composer run-script test -- --coverage-clover coverage.xml
+      env:
+        RUN_DB_TEST: YES
+        PGSQL_DSN: pgsql:host=localhost;port=5432;dbname=postgres
+        PGSQL_USER: postgres
+        PGSQL_PASSWORD: postgres
 
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v3.1.0
