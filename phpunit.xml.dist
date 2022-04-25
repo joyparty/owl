@@ -30,10 +30,11 @@
         </whitelist>
     </filter>
 
-    <!-- 定义这三个环境变量会执行连接数据库相关的测试 -->
-<!--    <php>-->
-<!--        <env name="PGSQL_DSN" value="pgsql:host=localhost;port=5432;dbname=owl_test"/>-->
-<!--        <env name="PGSQL_USER" value="postgres"/>-->
-<!--        <env name="PGSQL_PASSWORD" value="postgres"/>-->
-<!--    </php>-->
+    <php>
+        <!-- 将该环境变量设置为YES会进行数据库相关测试 -->
+        <env name="RUN_DB_TEST" value="NO" />
+        <env name="PGSQL_DSN" value="pgsql:host=localhost;port=5432;dbname=owl_test" />
+        <env name="PGSQL_USER" value="postgres" />
+        <env name="PGSQL_PASSWORD" value="postgres" />
+    </php>
 </phpunit>

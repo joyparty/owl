@@ -16,7 +16,7 @@ class DBTest extends TestCase
 
     public static function setUpBeforeClass()
     {
-        if (!isset($_ENV['PGSQL_DSN'])) {
+        if (($_ENV['RUN_DB_TEST'] ?? '') !== 'YES') {
             self::markTestSkipped();
         }
 
@@ -42,7 +42,7 @@ class DBTest extends TestCase
 
     public static function tearDownAfterClass()
     {
-        if (!isset($_ENV['PGSQL_DSN'])) {
+        if (($_ENV['RUN_DB_TEST'] ?? '') !== 'YES') {
             self::markTestSkipped();
         }
 
@@ -58,7 +58,7 @@ class DBTest extends TestCase
 
     public function testWhereIn()
     {
-        if (!isset($_ENV['PGSQL_DSN'])) {
+        if (($_ENV['RUN_DB_TEST'] ?? '') !== 'YES') {
             $this->markTestSkipped();
         }
 
@@ -80,7 +80,7 @@ class DBTest extends TestCase
 
     public function testUpdateWithoutWhere()
     {
-        if (!isset($_ENV['PGSQL_DSN'])) {
+        if (($_ENV['RUN_DB_TEST'] ?? '') !== 'YES') {
             $this->markTestSkipped();
         }
 
@@ -90,7 +90,7 @@ class DBTest extends TestCase
 
     public function testUpdateWithLimit()
     {
-        if (!isset($_ENV['PGSQL_DSN'])) {
+        if (($_ENV['RUN_DB_TEST'] ?? '') !== 'YES') {
             $this->markTestSkipped();
         }
 
@@ -100,7 +100,7 @@ class DBTest extends TestCase
 
     public function testUpdateWithOffset()
     {
-        if (!isset($_ENV['PGSQL_DSN'])) {
+        if (($_ENV['RUN_DB_TEST'] ?? '') !== 'YES') {
             $this->markTestSkipped();
         }
 
@@ -110,7 +110,7 @@ class DBTest extends TestCase
 
     public function testUpdateWithGroupBy()
     {
-        if (!isset($_ENV['PGSQL_DSN'])) {
+        if (($_ENV['RUN_DB_TEST'] ?? '') !== 'YES') {
             $this->markTestSkipped();
         }
 
@@ -120,7 +120,7 @@ class DBTest extends TestCase
 
     public function testDeleteWithoutWhere()
     {
-        if (!isset($_ENV['PGSQL_DSN'])) {
+        if (($_ENV['RUN_DB_TEST'] ?? '') !== 'YES') {
             $this->markTestSkipped();
         }
 
@@ -130,7 +130,7 @@ class DBTest extends TestCase
 
     public function testDeleteWithLimit()
     {
-        if (!isset($_ENV['PGSQL_DSN'])) {
+        if (($_ENV['RUN_DB_TEST'] ?? '') !== 'YES') {
             $this->markTestSkipped();
         }
 
@@ -140,7 +140,7 @@ class DBTest extends TestCase
 
     public function testDeleteWithOffset()
     {
-        if (!isset($_ENV['PGSQL_DSN'])) {
+        if (($_ENV['RUN_DB_TEST'] ?? '') !== 'YES') {
             $this->markTestSkipped();
         }
 
@@ -150,7 +150,7 @@ class DBTest extends TestCase
 
     public function testDeleteWithGroupBy()
     {
-        if (!isset($_ENV['PGSQL_DSN'])) {
+        if (($_ENV['RUN_DB_TEST'] ?? '') !== 'YES') {
             $this->markTestSkipped();
         }
 
@@ -169,7 +169,6 @@ class DBTest extends TestCase
 
     protected static function select($table): Select
     {
-
         return self::db()->select($table);
     }
 }
