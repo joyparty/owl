@@ -31,6 +31,9 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-composer-
 
+    - name: Show PHP version
+      run: php -v
+
     - name: Install dependencies
       run: composer install --ignore-platform-reqs
       
