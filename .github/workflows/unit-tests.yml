@@ -61,10 +61,10 @@ jobs:
     - name: Run Unit Tests
       run: composer run-script test -- --coverage-clover coverage.xml
       env:
-        RUN_DB_TEST: YES
-        PGSQL_DSN: pgsql:host=localhost;port=5432;dbname=postgres
-        PGSQL_USER: postgres
-        PGSQL_PASSWORD: postgres
+        OWL_TEST_RUN_DB_TEST: YES
+        OWL_TEST_PGSQL_DSN: pgsql:host=localhost;port=5432;dbname=postgres
+        OWL_TEST_PGSQL_USER: postgres
+        OWL_TEST_PGSQL_PASSWORD: postgres
 
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v3.1.0
