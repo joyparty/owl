@@ -7,27 +7,32 @@ on:
 jobs:
   UnitTest:
     name: Unit Tests
+
+    services:
+      postgres:
+        image: postgres
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_PASSWORD: postgres
+        # Set health checks to wait until postgres has started
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     
     strategy:
       matrix:
         os: [ubuntu-latest]
-        php-version: [7.0, 7.1, 7.2, 7.3, 7.4]
+        php-version: [8.0, 8.1]
       
     runs-on: ${{ matrix.os }}
 
     steps:
     - uses: actions/checkout@v3
 
-    - if: matrix.php-version == '7.0'
-      name: Setup PHP 7.0
-      uses: shivammathur/setup-php@v2
-      with:
-        php-version: ${{ matrix.php-version }}
-        extensions: mcrypt
-        coverage: xdebug
-
-    - if: matrix.php-version > '7.0'
-      name: Setup PHP > 7.0
+    - name: Setup PHP
       uses: shivammathur/setup-php@v2
       with:
         php-version: ${{ matrix.php-version }}
@@ -55,6 +60,11 @@ jobs:
       
     - name: Run Unit Tests
       run: composer run-script test -- --coverage-clover coverage.xml
+      env:
+        RUN_DB_TEST: YES
+        PGSQL_DSN: pgsql:host=localhost;port=5432;dbname=postgres
+        PGSQL_USER: postgres
+        PGSQL_PASSWORD: postgres
 
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v3.1.0

@@ -40,7 +40,7 @@ class Type
      */
     public function get($type)
     {
-        $type = strtolower($type);
+        $type = strtolower(strval($type));
 
         if ($type == 'int') {
             $type = 'integer';

@@ -140,7 +140,7 @@ class MiddlewareTest extends TestCase
         $middleware = new \Owl\Middleware();
 
         $this->expectException(\Exception::class);
-        $this->expectExceptionMessageRegExp('/is not callable/');
+        $this->expectExceptionMessageMatches('/is not callable/');
         $middleware->insert(1);
     }
 }

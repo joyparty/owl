@@ -13,12 +13,12 @@ class HooksTest extends TestCase
 {
     protected $class = Data::class;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         ($this->class)::setMapper(CacheMapper::class);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         ($this->class)::getMapper()->clearCachedData();
         ($this->class)::setMapper(Mapper::class);

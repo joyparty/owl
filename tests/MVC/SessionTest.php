@@ -9,12 +9,12 @@ use PHPUnit\Framework\TestCase;
 
 class SessionTest extends TestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         Session::initialize();
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         @Session::getInstance()->destroy();
         unset($_SESSION);

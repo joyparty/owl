@@ -48,7 +48,7 @@ trait Decorator
         $this->getReference()->$key = $value;
     }
 
-    public function __call($method, array $args)
+    public function __call(string $method, array $args)
     {
         $reference = $this->getReference();
 

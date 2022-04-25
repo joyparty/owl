@@ -44,7 +44,7 @@ class ContainerTest extends TestCase
     public function testGetUndefinedMember()
     {
         $this->expectException(\UnexpectedValueException::class);
-        $this->expectExceptionMessageRegExp('/does not exists/');
+        $this->expectExceptionMessageMatches('/does not exists/');
 
         $this->container->get('undefined key');
     }
@@ -66,7 +66,7 @@ class ContainerTest extends TestCase
         $this->assertTrue($this->container->remove('a'));
     }
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->container = new \Owl\Container();
     }

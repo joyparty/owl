@@ -29,22 +29,22 @@ class Arguments implements \ArrayAccess
         return $this->arguments;
     }
 
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         return isset($this->arguments[$offset]);
     }
 
-    public function offsetGet($offset)
+    public function offsetGet($offset): mixed
     {
         return $this->arguments[$offset];
     }
 
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
         $this->arguments[$offset] = $value;
     }
 
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): void
     {
         unset($this->arguments[$offset]);
     }

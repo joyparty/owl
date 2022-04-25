@@ -92,8 +92,8 @@ class TypeTest extends TestCase
         $this->assertTrue($attribute['auto_generate']);
 
         $re = '/^[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}$/';
-        $this->assertRegExp($re . 'i', $type->getDefaultValue(['auto_generate' => true]));
-        $this->assertRegExp($re, $type->getDefaultValue(['auto_generate' => true, 'upper' => true]));
+        $this->assertMatchesRegularExpression($re . 'i', $type->getDefaultValue(['auto_generate' => true]));
+        $this->assertMatchesRegularExpression($re, $type->getDefaultValue(['auto_generate' => true, 'upper' => true]));
     }
 
     public function testDateTime()
@@ -107,9 +107,9 @@ class TypeTest extends TestCase
 
         $this->assertInstanceOf(\DatetimeInterface::class, $type->normalize('now', []));
 
-        $this->assertRegExp('/^\d{4}\-\d{1,2}\-\d{1,2}T\d{1,2}:\d{1,2}:\d{1,2}[+\-]\d{1,2}(?::\d{1,2})?$/', $type->store($now, []));
-        $this->assertRegExp('/^\d{4}\-\d{1,2}\-\d{1,2}$/', $type->store($now, ['format' => 'Y-m-d']));
-        $this->assertRegExp('/^\d+$/', $type->store($now, ['format' => 'U']));
+        $this->assertMatchesRegularExpression('/^\d{4}\-\d{1,2}\-\d{1,2}T\d{1,2}:\d{1,2}:\d{1,2}[+\-]\d{1,2}(?::\d{1,2})?$/', $type->store($now, []));
+        $this->assertMatchesRegularExpression('/^\d{4}\-\d{1,2}\-\d{1,2}$/', $type->store($now, ['format' => 'Y-m-d']));
+        $this->assertMatchesRegularExpression('/^\d+$/', $type->store($now, ['format' => 'U']));
 
         $this->assertInstanceOf(\DateTimeImmutable::class, $type->restore('2014-01-01T00:00:00+0', []));
 

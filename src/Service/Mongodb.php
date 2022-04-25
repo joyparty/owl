@@ -25,7 +25,7 @@ class Mongodb extends Service
         parent::__construct(static::normalizeConfig($config));
     }
 
-    public function __call($method, array $args)
+    public function __call(string $method, array $args)
     {
         return call_user_func_array([$this->connect(), $method], $args);
     }

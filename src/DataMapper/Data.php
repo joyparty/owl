@@ -195,7 +195,7 @@ abstract class Data implements \JsonSerializable
      * @return mixed
      * @throws
      */
-    public function __call($method, array $args)
+    public function __call(string $method, array $args)
     {
         $prefix = strtolower(substr($method, 0, 3));
 
@@ -523,7 +523,7 @@ abstract class Data implements \JsonSerializable
      *
      * @return array
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return $this->toJSON();
     }
