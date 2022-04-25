@@ -23,14 +23,15 @@ jobs:
       uses: shivammathur/setup-php@v2
       with:
         php-version: ${{ matrix.php-version }}
-        extensions: mcrypt,xdebug
+        extensions: mcrypt
+        coverage: xdebug
 
     - if: matrix.php-version > '7.0'
       name: Setup PHP > 7.0
       uses: shivammathur/setup-php@v2
       with:
         php-version: ${{ matrix.php-version }}
-        extensions: xdebug
+        coverage: xdebug
 
     - name: Show PHP Info
       run: php -v && php -r "foreach (get_loaded_extensions() as \$each) echo \$each.':'.phpversion(\$each).PHP_EOL;"
@@ -53,4 +54,4 @@ jobs:
       run: composer install --ignore-platform-reqs
       
     - name: Run Unit Tests
-      run: composer run-script test
+      run: composer run-script test -- --coverage-clover coverage.xml
