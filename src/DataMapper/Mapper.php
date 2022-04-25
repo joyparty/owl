@@ -106,14 +106,14 @@ abstract class Mapper
     {
     }
 
-    final private function __before($event, Data $data)
+    private function __before($event, Data $data)
     {
         $event = ucfirst($event);
         call_user_func([$data, '__before' . $event]);
         call_user_func([$this, '__before' . $event], $data);
     }
 
-    final private function __after($event, Data $data)
+    private function __after($event, Data $data)
     {
         $event = ucfirst($event);
         call_user_func([$data, '__after' . $event]);
