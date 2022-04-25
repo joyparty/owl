@@ -55,3 +55,8 @@ jobs:
       
     - name: Run Unit Tests
       run: composer run-script test -- --coverage-clover coverage.xml
+
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v3.1.0
+      with:
+        files: ./coverage.xml
