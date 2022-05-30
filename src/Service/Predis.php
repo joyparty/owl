@@ -5,6 +5,7 @@ namespace Owl\Service;
 use Owl\Logger;
 use Owl\Service;
 use Predis\Client;
+use Predis\Response\Error;
 
 // https://github.com/nrk/predis
 if (!class_exists('\Predis\Client')) {
@@ -53,7 +54,12 @@ class Predis extends Service
             'arguments' => $args,
         ]);
 
-        return $args ? call_user_func_array([$client, $method], $args) : $client->$method();
+        $result = $args ? call_user_func_array([$client, $method], $args) : $client->$method();
+        if ($result instanceof Error) {
+            throw new \Owl\Service\Exception($result->getMessage());
+        }
+
+        return $result;
     }
 
     /**
