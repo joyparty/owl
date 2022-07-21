@@ -120,7 +120,7 @@ class Request implements ServerRequestInterface
             return $this->method;
         }
 
-        $method = strtoupper($this->server['REQUEST_METHOD'] ?? 'GET');
+        $method = $this->getOriginalMethod();
         if ('POST' !== $method) {
             return $this->method = $method;
         }
@@ -464,7 +464,7 @@ class Request implements ServerRequestInterface
 
         $contentType = $this->getHeaderLine('content-type');
         if ($bodyContent &&
-            in_array($this->getMethod(), ['PUT', 'PATCH', 'DELETE']) &&
+            in_array($this->getOriginalMethod(), ['PUT', 'PATCH', 'DELETE']) &&
             strpos($contentType, 'application/x-www-form-urlencoded') !== false
         ) {
             $this->post = array_merge($this->post, self::parseQuery($bodyContent, PHP_QUERY_RFC1738));
@@ -645,6 +645,11 @@ class Request implements ServerRequestInterface
     public function getIP()
     {
         return $this->getClientIP();
+    }
+
+    private function getOriginalMethod(): string
+    {
+        return strtoupper($this->server['REQUEST_METHOD'] ?? 'GET');
     }
 
     private static function parseQuery(string $data, $urlEncoding = true): array
