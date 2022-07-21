@@ -447,7 +447,11 @@ class Request implements ServerRequestInterface
 
     protected function initialize()
     {
-        $this->body = new ResourceStream(fopen('php://input', 'r'));
+        $bodyContent = file_get_contents('php://input');
+        $fp = fopen('php://temp', 'r+');
+        fwrite($fp, $bodyContent);
+        fseek($fp, 0);
+        $this->body = new ResourceStream($fp);
 
         $headers = [];
         foreach ($this->server as $key => $value) {
@@ -457,6 +461,14 @@ class Request implements ServerRequestInterface
             }
         }
         $this->headers = $headers;
+
+        $contentType = $this->getHeaderLine('content-type');
+        if ($bodyContent &&
+            in_array($this->getMethod(), ['PUT', 'PATCH', 'DELETE']) &&
+            strpos($contentType, 'application/x-www-form-urlencoded') !== false
+        ) {
+            $this->post = array_merge($this->post, self::parseQuery($bodyContent, PHP_QUERY_RFC1738));
+        }
     }
 
     /**
@@ -633,5 +645,44 @@ class Request implements ServerRequestInterface
     public function getIP()
     {
         return $this->getClientIP();
+    }
+
+    private static function parseQuery(string $data, $urlEncoding = true): array
+    {
+        $result = [];
+
+        if ($data === '') {
+            return $result;
+        }
+
+        if ($urlEncoding === true) {
+            $decoder = function ($value) {
+                return rawurldecode(str_replace('+', ' ', $value));
+            };
+        } elseif ($urlEncoding === PHP_QUERY_RFC3986) {
+            $decoder = 'rawurldecode';
+        } elseif ($urlEncoding === PHP_QUERY_RFC1738) {
+            $decoder = 'urldecode';
+        } else {
+            $decoder = function ($str) {
+                return $str;
+            };
+        }
+
+        foreach (explode('&', $data) as $kvp) {
+            $parts = explode('=', $kvp, 2);
+            $key = $decoder($parts[0]);
+            $value = isset($parts[1]) ? $decoder($parts[1]) : null;
+            if (!isset($result[$key])) {
+                $result[$key] = $value;
+            } else {
+                if (!is_array($result[$key])) {
+                    $result[$key] = [$result[$key]];
+                }
+                $result[$key][] = $value;
+            }
+        }
+
+        return $result;
     }
 }
