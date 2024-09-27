@@ -42,6 +42,7 @@ use RuntimeException;
 
 class Cookie extends BaseContext
 {
+    public $salt = null;
     protected $data;
     protected $response;
 
