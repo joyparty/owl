@@ -21,6 +21,8 @@ class Request implements ServerRequestInterface
     protected $uri;
     protected $allow_client_proxy_ip = false;
 
+    private $fp = null;
+
     public function __construct($get = null, $post = null, $server = null, $cookies = null, $files = null)
     {
         $this->get = null === $get ? $_GET : $get;
@@ -30,6 +32,14 @@ class Request implements ServerRequestInterface
         $this->files = null === $files ? $_FILES : $files;
 
         $this->initialize();
+    }
+
+    public function __destruct()
+    {
+        if (is_resource($this->fp)) {
+            fclose($this->fp);
+            $this->fp = null;
+        }
     }
 
     public function __clone()
@@ -464,6 +474,9 @@ class Request implements ServerRequestInterface
     {
         $bodyContent = file_get_contents('php://input');
         $fp = fopen('php://temp', 'r+');
+        if (is_resource($fp)) {
+            $this->fp = $fp;
+        }
         fwrite($fp, $bodyContent);
         fseek($fp, 0);
         $this->body = new ResourceStream($fp);
