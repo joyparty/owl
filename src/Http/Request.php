@@ -5,9 +5,6 @@ namespace Owl\Http;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
 
-/**
- * @property array $server
- */
 class Request implements ServerRequestInterface
 {
     use MessageTrait;
@@ -15,6 +12,7 @@ class Request implements ServerRequestInterface
     /** @var callable */
     private $client_ip_extractor = null;
 
+    public $server;
     protected $get;
     protected $post;
     protected $cookies;
