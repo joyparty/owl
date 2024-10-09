@@ -163,7 +163,7 @@ class Response implements ResponseInterface
 
             foreach ($this->cookies as $cookie) {
                 list($name, $value, $expire, $path, $domain, $secure, $httponly) = $cookie;
-                setcookie($name, $value, $expire, $path, $domain, $secure, $httponly);
+                setcookie($name, $value, $expire, $path, $domain ?? "", $secure ?? false, $httponly);
             }
         }
 
