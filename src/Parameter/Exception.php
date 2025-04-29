@@ -7,4 +7,5 @@ namespace Owl\Parameter;
  */
 class Exception extends \Exception
 {
+    public string $parameter = '';
 }
